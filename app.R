@@ -2477,18 +2477,23 @@ server <- function(input, output, session) {
   
   # =================== PROPORTION & VARIANCE TESTS ===================
   observeEvent(input$run_prop_var_test, {
-    req(input$prop_var_variable, input$prop_var_test_type)
-    
-    # Use transformed data if available
-    data_to_use <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
-    
-    # Get variable data with proper validation
-    if (!input$prop_var_variable %in% names(data_to_use)) {
-      output$prop_var_result <- renderText({
-        "ERROR: Variabel tidak ditemukan dalam dataset."
-      })
-      return()
-    }
+    # Wrap entire test in try-catch to prevent crashes
+    tryCatch({
+      req(input$prop_var_variable, input$prop_var_test_type)
+      
+      # Use transformed data if available
+      data_to_use <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+      
+      # Get variable data with proper validation
+      if (!input$prop_var_variable %in% names(data_to_use)) {
+        output$prop_var_result <- renderText({
+          "ERROR: Variabel tidak ditemukan dalam dataset."
+        })
+        output$prop_var_interpretation <- renderText({
+          "Silakan pilih variabel yang tersedia dalam dataset."
+        })
+        return()
+      }
     
     var_data <- data_to_use[[input$prop_var_variable]]
     
@@ -2577,23 +2582,72 @@ server <- function(input, output, session) {
         )
       })
       
+      # Force interpretation update for variance test
+      output$prop_var_interpretation <- renderText({
+        paste0(
+          "INTERPRETASI HASIL UJI VARIANS 1 SAMPEL:\n\n",
+          "HASIL UJI:\n",
+          "• Chi-squared statistic: ", round(chi_stat, 4), "\n",
+          "• df: ", n - 1, "\n",
+          "• p-value: ", format(p_value, scientific = TRUE), "\n\n",
+          "KEPUTUSAN STATISTIK:\n",
+          if (p_value < 0.05) {
+            paste0("• Tolak H₀ (p = ", round(p_value, 4), " < 0.05)\n",
+                   "• Varians populasi BERBEDA secara signifikan dari nilai yang diuji\n",
+                   "• Perbedaan tidak disebabkan oleh kebetulan")
+          } else {
+            paste0("• Gagal tolak H₀ (p = ", round(p_value, 4), " ≥ 0.05)\n",
+                   "• Varians populasi TIDAK BERBEDA secara signifikan dari nilai yang diuji\n",
+                   "• Data konsisten dengan hipotesis null")
+          }, "\n\n",
+          "IMPLIKASI PRAKTIS:\n",
+          if (p_value < 0.05) {
+            "• Variabilitas data berbeda dari ekspektasi\n• Perlu investigasi faktor penyebab variabilitas\n• Pertimbangkan transformasi data jika diperlukan"
+          } else {
+            "• Variabilitas data sesuai dengan ekspektasi\n• Model atau asumsi varians dapat diterima\n• Data memiliki konsistensi yang baik"
+          }
+        )
+      })
+      
     } else if (input$prop_var_test_type == "prop_two" && !is.null(input$group_var_prop)) {
       # Two sample proportion test
       if (!input$group_var_prop %in% names(data_to_use)) {
         output$prop_var_result <- renderText({
           "ERROR: Variabel kelompok tidak ditemukan dalam dataset."
         })
+        output$prop_var_interpretation <- renderText({
+          "Pilih variabel kelompok yang valid untuk melakukan uji proporsi dua sampel."
+        })
         return()
       }
       
       group_data <- data_to_use[[input$group_var_prop]]
-      test_data <- data.frame(value = var_data, group = group_data)
+      
+      # Ensure same length for data.frame
+      min_length <- min(length(var_data), length(group_data))
+      if (min_length == 0) {
+        output$prop_var_result <- renderText({
+          "ERROR: Tidak ada data yang valid untuk analisis."
+        })
+        output$prop_var_interpretation <- renderText({
+          "Periksa data dan pastikan variabel memiliki nilai yang valid."
+        })
+        return()
+      }
+      
+      test_data <- data.frame(
+        value = var_data[1:min_length], 
+        group = group_data[1:min_length]
+      )
       test_data <- test_data[complete.cases(test_data), ]
       
       if (nrow(test_data) < 10) {
         output$prop_var_result <- renderText({
           paste0("ERROR: Data tidak cukup untuk uji dua sampel. Ditemukan ", nrow(test_data), 
                  " observasi valid, minimum 10 diperlukan.")
+        })
+        output$prop_var_interpretation <- renderText({
+          "Uji proporsi dua sampel memerlukan minimal 10 observasi yang valid."
         })
         return()
       }
@@ -2640,17 +2694,39 @@ server <- function(input, output, session) {
         output$prop_var_result <- renderText({
           "ERROR: Variabel kelompok tidak ditemukan dalam dataset."
         })
+        output$prop_var_interpretation <- renderText({
+          "Pilih variabel kelompok yang valid untuk melakukan uji varians dua sampel."
+        })
         return()
       }
       
       group_data <- data_to_use[[input$group_var_prop]]
-      test_data <- data.frame(value = var_data, group = group_data)
+      
+      # Ensure same length for data.frame
+      min_length <- min(length(var_data), length(group_data))
+      if (min_length == 0) {
+        output$prop_var_result <- renderText({
+          "ERROR: Tidak ada data yang valid untuk analisis."
+        })
+        output$prop_var_interpretation <- renderText({
+          "Periksa data dan pastikan variabel memiliki nilai yang valid."
+        })
+        return()
+      }
+      
+      test_data <- data.frame(
+        value = var_data[1:min_length], 
+        group = group_data[1:min_length]
+      )
       test_data <- test_data[complete.cases(test_data), ]
       
       if (nrow(test_data) < 10) {
         output$prop_var_result <- renderText({
           paste0("ERROR: Data tidak cukup untuk uji dua sampel. Ditemukan ", nrow(test_data), 
                  " observasi valid, minimum 10 diperlukan.")
+        })
+        output$prop_var_interpretation <- renderText({
+          "Uji varians dua sampel memerlukan minimal 10 observasi yang valid."
         })
         return()
       }
@@ -2857,6 +2933,26 @@ server <- function(input, output, session) {
           plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
                        yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
                        title = "Plot Error")
+      })
+    })
+    }, error = function(e) {
+      # Global error handler to prevent crashes
+      output$prop_var_result <- renderText({
+        paste("ERROR: Terjadi kesalahan dalam analisis:", e$message, 
+              "\nSilakan periksa data dan pengaturan uji.")
+      })
+      output$prop_var_interpretation <- renderText({
+        "Terjadi kesalahan. Pastikan data dan variabel yang dipilih sesuai dengan jenis uji yang dipilih."
+      })
+      
+      # Create safe error plot
+      output$prop_var_plot <- renderPlotly({
+        plotly::plot_ly() %>% 
+          plotly::add_text(x = 0.5, y = 0.5, text = "Error dalam visualisasi", 
+                         textfont = list(size = 16), showlegend = FALSE) %>%
+          plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                       yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                       title = "Visualization Error")
       })
     })
   })
@@ -3114,17 +3210,37 @@ server <- function(input, output, session) {
       p_value <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
       
       output$regression_summary <- renderText({
+        # Format coefficients table nicely
+        coef_table <- reg_summary$coefficients
+        
+        # Create formatted coefficient table
+        coef_text <- "TABEL KOEFISIEN:\n\n"
+        coef_text <- paste0(coef_text, sprintf("%-15s %10s %10s %10s %10s\n", 
+                                              "Variable", "Estimate", "Std.Error", "t value", "Pr(>|t|)"))
+        coef_text <- paste0(coef_text, paste(rep("-", 65), collapse = ""), "\n")
+        
+        for(i in 1:nrow(coef_table)) {
+          coef_text <- paste0(coef_text, sprintf("%-15s %10.4f %10.4f %10.3f %10.2e\n",
+                                                rownames(coef_table)[i],
+                                                coef_table[i,1], coef_table[i,2], 
+                                                coef_table[i,3], coef_table[i,4]))
+        }
+        
+        # Add significance indicators
+        coef_text <- paste0(coef_text, "\nKode Signifikansi: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n")
+        
         paste0(
           "HIPOTESIS UJI REGRESI LINEAR BERGANDA:\n\n",
           "H₀: β₁ = β₂ = ... = βₖ = 0 (semua koefisien regresi sama dengan nol)\n",
           "H₁: Minimal ada satu βᵢ ≠ 0 (minimal ada satu prediktor yang signifikan)\n\n",
           "RINGKASAN MODEL:\n\n",
-          "• R-squared: ", round(r_squared, 4), " (", round(r_squared*100, 2), "% varians dijelaskan)\n",
+          "• R-squared: ", round(r_squared, 4), " (", round(r_squared*100, 1), "% varians dijelaskan)\n",
           "• Adjusted R-squared: ", round(adj_r_squared, 4), "\n",
-          "• F-statistic: ", round(f_stat[1], 4), " (p-value: ", format(p_value, scientific = TRUE), ")\n",
-          "• Jumlah observasi: ", nrow(reg_data), "\n\n",
-          "TABEL KOEFISIEN:\n\n",
-          capture.output(print(reg_summary$coefficients))
+          "• F-statistic: ", round(f_stat[1], 4), " pada ", f_stat[2], " dan ", f_stat[3], " df\n",
+          "• p-value: ", format(p_value, scientific = TRUE), "\n",
+          "• Jumlah observasi: ", nrow(reg_data), "\n",
+          "• Residual standard error: ", round(reg_summary$sigma, 4), "\n\n",
+          coef_text
         )
       })
       
