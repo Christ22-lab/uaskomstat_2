@@ -217,11 +217,11 @@ ui <- dashboardPage(
         .sidebar-menu > li > a {
           color: var(--gray-700) !important;
           font-weight: 500;
-          padding: 8px 16px;
+          padding: 10px 16px;
           border-radius: var(--border-radius-sm);
           margin: 2px 6px;
           transition: var(--transition);
-          font-size: 1.45rem; /* Increased font size for main menu items */
+          font-size: 14px; /* Standardized font size */
         }
         
         .sidebar-menu > li > a:hover,
@@ -236,7 +236,7 @@ ui <- dashboardPage(
         .sidebar-menu > li > a > .glyphicon,
         .sidebar-menu > li > a > .ion {
           margin-right: 12px;
-          font-size: 1.1.15rem;
+          font-size: 14px;
         }
         
         /* Fix for sub-menu background and font size */
@@ -248,7 +248,7 @@ ui <- dashboardPage(
         .treeview-menu > li > a {
           color: var(--gray-600) !important;
           padding: 8px 20px 8px 40px;
-          font-size: 1.05rem; /* Standardized font size for sub-menu items */
+          font-size: 13px; /* Standardized font size for sub-menu items */
           transition: var(--transition);
           border-radius: 0 !important; /* Remove border-radius for sub-menu items */
           margin: 0; /* Remove margin for sub-menu items */
@@ -269,10 +269,10 @@ ui <- dashboardPage(
           border: 1px solid var(--gray-200);
           border-radius: var(--border-radius);
           box-shadow: 
-            inset 3px 3px 7px rgba(0, 0, 0, 0.07), /* Stronger light inner shadow for top-left */
-            inset -3px -3px 7px rgba(255, 255, 255, 0.9), /* Stronger light inner shadow for bottom-right */
+            inset 2px 2px 4px rgba(0, 0, 0, 0.05), /* Subtle inner shadow for top-left */
+            inset -2px -2px 4px rgba(255, 255, 255, 0.7), /* Subtle inner shadow for bottom-right */
             var(--shadow-md); /* Outer shadow for overall lift */
-          margin-bottom: 24px;
+          margin-bottom: 20px;
           overflow: hidden;
           transition: var(--transition);
         }
@@ -304,7 +304,7 @@ ui <- dashboardPage(
         }
         
         .box-body {
-          padding: 24px;
+          padding: 16px;
         }
         
         /* Status Colors for Boxes */
@@ -348,8 +348,8 @@ ui <- dashboardPage(
         .btn {
           font-weight: 500;
           border-radius: var(--border-radius-sm);
-          padding: 12px 24px;
-          font-size: 1.15rem; /* Adjusted button font size */
+          padding: 10px 20px;
+          font-size: 0.95rem; /* Standardized smaller font size */
           border: none;
           cursor: pointer;
           transition: var(--transition);
@@ -416,8 +416,8 @@ ui <- dashboardPage(
         .form-control {
           border: 2px solid var(--gray-200);
           border-radius: var(--border-radius-sm);
-          padding: 12px 16px;
-          font-size: 1.15rem; /* Adjusted form control font size */
+          padding: 10px 14px;
+          font-size: 0.95rem; /* Standardized smaller font size */
           transition: var(--transition);
           background: white;
         }
@@ -431,8 +431,8 @@ ui <- dashboardPage(
         .form-group label {
           font-weight: 500;
           color: var(--gray-700);
-          margin-bottom: 8px;
-          font-size: 1.15rem; /* Adjusted form label font size */
+          margin-bottom: 6px;
+          font-size: 0.95rem; /* Standardized smaller font size */
         }
         
         /* Select2 Styling */
@@ -882,23 +882,23 @@ ui <- dashboardPage(
                         tags$div(
                           style = "display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;",
                           tags$div(class = "feature-card slide-in",
-                                   h5("🗄️ Manajemen Data"),
+                                   h5("Manajemen Data"),
                                    p("Transformasi variabel kontinyu ke kategorik, penanganan missing values, dan preprocessing data.")
                           ),
                           tags$div(class = "feature-card slide-in",
-                                   h5("📊 Eksplorasi Data"),
+                                   h5("Eksplorasi Data"),
                                    p("Statistik deskriptif lengkap, visualisasi interaktif, dan pemetaan geografis data.")
                           ),
                           tags$div(class = "feature-card slide-in",
-                                   h5("✅ Uji Asumsi"),
+                                   h5("Uji Asumsi"),
                                    p("Uji normalitas dan homogenitas data untuk memastikan validitas analisis statistik.")
                           ),
                           tags$div(class = "feature-card slide-in",
-                                   h5("🧮 Statistik Inferensia"),
+                                   h5("Statistik Inferensia"),
                                    p("Uji hipotesis lengkap: uji rata-rata, proporsi, varians, dan ANOVA.")
                           ),
                           tags$div(class = "feature-card slide-in",
-                                   h5("📈 Regresi Linear"),
+                                   h5("Regresi Linear"),
                                    p("Analisis regresi berganda dengan uji asumsi dan diagnostik model.")
                           )
                         ),
@@ -917,14 +917,14 @@ ui <- dashboardPage(
                         
                         br(),
                         div(style = "text-align: center;",
-                            actionButton("start_analysis", "🚀 Mulai Analisis", class = "btn-primary btn-lg"),
+                            actionButton("start_analysis", "Mulai Analisis", class = "btn-primary btn-lg"),
                         ),
                         
                         br(), br(),
                         h4("Dukungan dan Bantuan"),
                         p("Jika Anda mengalami kendala atau membutuhkan bantuan, silakan merujuk ke dokumentasi atau hubungi tim pengembang."),
                         
-                        downloadButton("download_manual", "📖 Download Manual Pengguna", class = "btn-info")
+                        downloadButton("download_manual", "Download Manual Pengguna", class = "btn-info")
                     )
                 )
               )
@@ -935,9 +935,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Manajemen Data - Pengelolaan dan Transformasi Dataset", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk mengelola data, melakukan upload file, preview data, dan transformasi variabel kontinyu menjadi kategorik."),
-                        p(strong("⚡ Fitur Utama:"), "Upload file (CSV/Excel), load data default SOVI, preview data, transformasi variabel (kategorisasi, normalisasi, standardisasi), dan download hasil transformasi."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih sumber data (default/custom), 2) Pilih variabel untuk ditransformasi, 3) Tentukan metode transformasi, 4) Terapkan transformasi, 5) Download hasil jika diperlukan.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk mengelola data, melakukan upload file, preview data, dan transformasi variabel kontinyu menjadi kategorik."),
+                        p(strong("Fitur Utama:"), "Upload file (CSV/Excel), load data default SOVI, preview data, transformasi variabel (kategorisasi, normalisasi, standardisasi), dan download hasil transformasi."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih sumber data (default/custom), 2) Pilih variabel untuk ditransformasi, 3) Tentukan metode transformasi, 4) Terapkan transformasi, 5) Download hasil jika diperlukan.")
                     )
                 )
               ),
@@ -1271,47 +1271,56 @@ ui <- dashboardPage(
               )
       ),
       
-      # =================== UJI PROPORSI & VARIANS ===================
-      tabItem(tabName = "prop_var_tests",
-              fluidRow(
-                box(width = 4, title = "Pengaturan Uji", status = "primary", solidHeader = TRUE,
-                    selectInput("prop_var_test_type", "Jenis Uji:",
-                                choices = list(
-                                  "Uji Proporsi 1 Sampel" = "prop_one",
-                                  "Uji Proporsi 2 Sampel" = "prop_two",
-                                  "Uji Varians 1 Sampel" = "var_one",
-                                  "Uji Varians 2 Sampel" = "var_two"
-                                )),
-                    selectInput("prop_var_variable", "Variabel:", choices = NULL),
-                    conditionalPanel(
-                      condition = "input.prop_var_test_type == 'prop_one'",
-                      numericInput("prop_test_value", "Proporsi yang Diuji:", value = 0.5, min = 0, max = 1)
-                    ),
-                    conditionalPanel(
-                      condition = "input.prop_var_test_type == 'var_one'",
-                      numericInput("var_test_value", "Varians yang Diuji:", value = 1, min = 0)
-                    ),
-                    conditionalPanel(
-                      condition = "input.prop_var_test_type == 'prop_two' || input.prop_var_test_type == 'var_two'",
-                      selectInput("group_var_prop", "Variabel Kelompok:", choices = NULL)
-                    ),
-                    actionButton("run_prop_var_test", "Jalankan Uji", class = "btn-primary")
-                ),
-                
-                box(width = 8, title = "Hasil Uji Proporsi/Varians", status = "info", solidHeader = TRUE,
-                    verbatimTextOutput("prop_var_result"),
-                    br(),
-                    div(class = "interpretation-box",
-                        h5("Interpretasi Hasil:"),
-                        textOutput("prop_var_interpretation")
-                    ),
-                    br(),
-                    plotlyOutput("prop_var_plot"),
-                    br(),
-                    downloadButton("download_prop_var_test", "Download Hasil Uji (Word)", class = "btn-success")
+        # =================== UJI PROPORSI & VARIANS ===================
+  tabItem(tabName = "prop_var_tests",
+          fluidRow(
+            box(width = 12, title = "Uji Proporsi dan Varians - Pengujian Hipotesis Parameter", status = "info", solidHeader = TRUE,
+                div(class = "info-box",
+                    p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menguji hipotesis tentang proporsi dan varians populasi menggunakan berbagai jenis uji statistik."),
+                    p(strong("Fitur Utama:"), "Uji proporsi satu sampel, uji proporsi dua sampel, uji varians satu sampel, uji varians dua sampel dengan confidence interval dan interpretasi statistik."),
+                    p(strong("Cara Penggunaan:"), "1) Pilih jenis uji, 2) Tentukan variabel dan parameter uji, 3) Set nilai uji, 4) Jalankan uji dan interpretasi hasil.")
                 )
-              )
-      ),
+            )
+          ),
+          fluidRow(
+            box(width = 4, title = "Pengaturan Uji", status = "primary", solidHeader = TRUE,
+                selectInput("prop_var_test_type", "Jenis Uji:",
+                            choices = list(
+                              "Uji Proporsi 1 Sampel" = "prop_one",
+                              "Uji Proporsi 2 Sampel" = "prop_two",
+                              "Uji Varians 1 Sampel" = "var_one",
+                              "Uji Varians 2 Sampel" = "var_two"
+                            )),
+                selectInput("prop_var_variable", "Variabel:", choices = NULL),
+                conditionalPanel(
+                  condition = "input.prop_var_test_type == 'prop_one'",
+                  numericInput("prop_test_value", "Proporsi yang Diuji:", value = 0.5, min = 0, max = 1)
+                ),
+                conditionalPanel(
+                  condition = "input.prop_var_test_type == 'var_one'",
+                  numericInput("var_test_value", "Varians yang Diuji:", value = 1, min = 0)
+                ),
+                conditionalPanel(
+                  condition = "input.prop_var_test_type == 'prop_two' || input.prop_var_test_type == 'var_two'",
+                  selectInput("group_var_prop", "Variabel Kelompok:", choices = NULL)
+                ),
+                actionButton("run_prop_var_test", "Jalankan Uji", class = "btn-primary")
+            ),
+            
+            box(width = 8, title = "Hasil Uji Proporsi/Varians", status = "info", solidHeader = TRUE,
+                verbatimTextOutput("prop_var_result"),
+                br(),
+                div(class = "interpretation-box",
+                    h5("Interpretasi Hasil:"),
+                    textOutput("prop_var_interpretation")
+                ),
+                br(),
+                plotlyOutput("prop_var_plot"),
+                br(),
+                downloadButton("download_prop_var_test", "Download Hasil Uji (Word)", class = "btn-success")
+            )
+          )
+  ),
       
       # =================== ANOVA ===================
       tabItem(tabName = "anova_tests",
@@ -1711,7 +1720,7 @@ server <- function(input, output, session) {
     if (!is.null(values$transformed_data)) {
       method <- input$transform_method
       if (method == "quantile") {
-        "**Interpretasi Transformasi:**\n\nTransformasi kuantil membagi data menjadi kategori berdasarkan persentil, berguna untuk membuat kelompok dengan distribusi yang sama."
+                                "Interpretasi Transformasi:\n\nTransformasi kuantil membagi data menjadi kategori berdasarkan persentil, berguna untuk membuat kelompok dengan distribusi yang sama."
       } else if (method == "custom") {
         n_breaks <- input$n_custom_breaks
         if(is.null(n_breaks)) n_breaks <- 3
@@ -1730,7 +1739,7 @@ server <- function(input, output, session) {
         })
         
         interpretasi <- paste0(
-          "**TRANSFORMASI KATEGORISASI CUSTOM:**\n\n",
+          "TRANSFORMASI KATEGORISASI CUSTOM:\n\n",
           "Data kontinyu berhasil diubah menjadi ", n_breaks, " kategori:\n"
         )
         
@@ -1740,22 +1749,22 @@ server <- function(input, output, session) {
         }
         
         interpretasi <- paste0(interpretasi,
-                               "\n**MANFAAT KATEGORISASI:**\n",
+                               "\nMANFAAT KATEGORISASI:\n",
                                "• Mempermudah interpretasi data kontinyu\n",
                                "• Memungkinkan analisis berdasarkan kelompok\n",
                                "• Mengatasi outlier ekstrem\n",
                                "• Cocok untuk analisis non-parametrik\n\n",
-                               "**CATATAN:** Pastikan breakpoint sesuai dengan distribusi data dan tujuan analisis Anda."
+                               "CATATAN: Pastikan breakpoint sesuai dengan distribusi data dan tujuan analisis Anda."
         )
         
         return(interpretasi)
-      } else if (method == "log") {
-        "**Interpretasi Transformasi:**\n\nTransformasi logaritma mengurangi skewness pada data dan menstabilkan varians."
-      } else if (method == "scale") {
-        "**Interpretasi Transformasi:**\n\nStandardisasi mengubah data menjadi z-score dengan mean=0 dan std=1, berguna untuk perbandingan variabel dengan skala berbeda."
-      } else {
-        "**Interpretasi Transformasi:**\n\nTransformasi telah diterapkan sesuai dengan metode yang dipilih."
-      }
+              } else if (method == "log") {
+          "Interpretasi Transformasi:\n\nTransformasi logaritma mengurangi skewness pada data dan menstabilkan varians."
+        } else if (method == "scale") {
+          "Interpretasi Transformasi:\n\nStandardisasi mengubah data menjadi z-score dengan mean=0 dan std=1, berguna untuk perbandingan variabel dengan skala berbeda."
+        } else {
+          "Interpretasi Transformasi:\n\nTransformasi telah diterapkan sesuai dengan metode yang dipilih."
+        }
     }
   })
   
@@ -1810,17 +1819,17 @@ server <- function(input, output, session) {
     output$descriptive_interpretation <- renderText({
       if (!is.null(desc_stats)) {
         interpretasi <- paste0(
-          "**INTERPRETASI STATISTIK DESKRIPTIF:**\n\n",
+          "INTERPRETASI STATISTIK DESKRIPTIF:\n\n",
           "Analisis melibatkan ", length(input$desc_variables), " variabel numerik.\n\n",
-          "**UKURAN PEMUSATAN:**\n",
+          "UKURAN PEMUSATAN:\n",
           "• Mean (rata-rata): Nilai rata-rata dari semua observasi\n",
           "• Median: Nilai tengah setelah data diurutkan (lebih robust terhadap outlier)\n",
           "• Mode: Nilai yang paling sering muncul\n\n",
-          "**UKURAN PENYEBARAN:**\n",
+          "UKURAN PENYEBARAN:\n",
           "• Standard Deviation (SD): Mengukur seberapa jauh data tersebar dari mean\n",
           "• Variance: Kuadrat dari standard deviation\n",
           "• Range: Selisih nilai maksimum dan minimum\n\n",
-          "**UKURAN BENTUK DISTRIBUSI:**\n",
+          "UKURAN BENTUK DISTRIBUSI:\n",
           "• Skewness: Mengukur kemiringan distribusi\n",
           "  • Nilai ≈ 0: Distribusi simetris\n",
           "  • Nilai > 1: Condong ke kanan (right-skewed)\n",
@@ -1829,7 +1838,7 @@ server <- function(input, output, session) {
           "  • Nilai ≈ 3: Distribusi normal\n",
           "  • Nilai > 3: Lebih tajam dari normal (leptokurtic)\n",
           "  • Nilai < 3: Lebih datar dari normal (platykurtic)\n\n",
-          "**TIPS INTERPRETASI:**\n",
+          "TIPS INTERPRETASI:\n",
           "• Bandingkan mean vs median untuk deteksi skewness\n",
           "• CV (Coefficient of Variation) = SD/Mean * 100% untuk perbandingan variabilitas relatif\n",
           "• Gunakan plot untuk visualisasi yang lebih baik"
@@ -1860,7 +1869,7 @@ server <- function(input, output, session) {
       })
       
       output$plot_interpretation <- renderText({
-        "**Interpretasi Visualisasi:**\n\nHistogram menunjukkan distribusi frekuensi data, sementara garis density (merah) menunjukkan estimasi distribusi probabilitas. Bentuk distribusi dapat memberikan insight tentang normalitas data dan keberadaan outlier."
+        "Interpretasi Visualisasi:\n\nHistogram menunjukkan distribusi frekuensi data, sementara garis density (merah) menunjukkan estimasi distribusi probabilitas. Bentuk distribusi dapat memberikan insight tentang normalitas data dan keberadaan outlier."
       })
     }
   })
@@ -1893,13 +1902,17 @@ server <- function(input, output, session) {
         if (input$color_var != "none") {
           p <- p + aes_string(fill = input$color_var) +
             scale_fill_manual(values = color_palette) +
-            geom_boxplot(alpha = 0.7, size = 1)
+            geom_boxplot(alpha = 0.7, outlier.shape = 16, outlier.size = 2, 
+                        size = 1.2, width = 0.6)
         } else {
-          p <- p + geom_boxplot(fill = "#1f77b4", alpha = 0.7, size = 1)
+          p <- p + geom_boxplot(fill = "#1f77b4", alpha = 0.7, outlier.shape = 16, 
+                               outlier.size = 2, size = 1.2, width = 0.6)
         }
         p <- p + labs(title = paste("Box Plot:", input$y_var, "by", input$x_var)) +
           theme_minimal() +
-          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+          theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                panel.grid.major = element_line(color = "gray90", size = 0.5),
+                panel.grid.minor = element_blank())
         
       } else if (input$plot_type == "histogram") {
         p <- ggplot(values$current_data, aes_string(x = input$x_var))
@@ -1978,12 +1991,12 @@ server <- function(input, output, session) {
     
     output$visual_interpretation <- renderText({
       switch(input$plot_type,
-             "scatter" = "**Interpretasi Visualisasi:**\n\nScatter plot menunjukkan hubungan antara dua variabel numerik. Garis regresi (merah) menunjukkan trend linear. Titik-titik yang tersebar di sekitar garis mengindikasikan kekuatan korelasi.",
-             "boxplot" = "**Interpretasi Visualisasi:**\n\nBox plot menampilkan distribusi data melalui kuartil. Kotak menunjukkan IQR (Q1-Q3), garis tengah adalah median, dan whiskers menunjukkan range data. Outlier ditampilkan sebagai titik terpisah.",
-             "histogram" = "**Interpretasi Visualisasi:**\n\nHistogram menunjukkan distribusi frekuensi variabel. Bentuk distribusi dapat mengindikasikan normalitas, skewness, atau multimodality data.",
-             "correlation" = "**Interpretasi Visualisasi:**\n\nCorrelation matrix menunjukkan kekuatan hubungan linear antar variabel. Warna merah menunjukkan korelasi positif, hijau korelasi negatif, dan putih tidak ada korelasi.",
-             "barplot" = "**Interpretasi Visualisasi:**\n\nBar chart menunjukkan frekuensi atau count dari setiap kategori dalam variabel. Tinggi bar mencerminkan jumlah observasi per kategori.",
-             "density" = "**Interpretasi Visualisasi:**\n\nDensity plot menunjukkan estimasi distribusi probabilitas data. Kurva yang halus memberikan gambaran bentuk distribusi yang lebih smooth dibanding histogram.",
+             "scatter" = "Interpretasi Visualisasi:\n\nScatter plot menunjukkan hubungan antara dua variabel numerik. Garis regresi (merah) menunjukkan trend linear. Titik-titik yang tersebar di sekitar garis mengindikasikan kekuatan korelasi.",
+             "boxplot" = "Interpretasi Visualisasi:\n\nBox plot menampilkan distribusi data melalui kuartil. Kotak menunjukkan IQR (Q1-Q3), garis tengah adalah median, dan whiskers menunjukkan range data. Outlier ditampilkan sebagai titik terpisah.",
+             "histogram" = "Interpretasi Visualisasi:\n\nHistogram menunjukkan distribusi frekuensi variabel. Bentuk distribusi dapat mengindikasikan normalitas, skewness, atau multimodality data.",
+             "correlation" = "Interpretasi Visualisasi:\n\nCorrelation matrix menunjukkan kekuatan hubungan linear antar variabel. Warna merah menunjukkan korelasi positif, hijau korelasi negatif, dan putih tidak ada korelasi.",
+             "barplot" = "Interpretasi Visualisasi:\n\nBar chart menunjukkan frekuensi atau count dari setiap kategori dalam variabel. Tinggi bar mencerminkan jumlah observasi per kategori.",
+             "density" = "Interpretasi Visualisasi:\n\nDensity plot menunjukkan estimasi distribusi probabilitas data. Kurva yang halus memberikan gambaran bentuk distribusi yang lebih smooth dibanding histogram.",
              "Visualisasi telah dibuat sesuai dengan jenis plot yang dipilih."
       )
     })
@@ -2120,7 +2133,7 @@ server <- function(input, output, session) {
                               "points" = "Point map menampilkan data sebagai titik-titik dengan warna yang mencerminkan nilai variabel di atas citra satelit."
       )
       
-      paste0("**Interpretasi Peta:**\n\nPeta interaktif menunjukkan distribusi geografis dari variabel ", input$map_variable, 
+      paste0("Interpretasi Peta:\n\nPeta interaktif menunjukkan distribusi geografis dari variabel ", input$map_variable, 
              " menggunakan style ", input$map_type, ". ", map_type_desc,
              "\nKlik pada titik untuk melihat nilai detail. Pola spasial dapat mengungkap clustering geografis atau distribusi regional.")
     })
@@ -2377,16 +2390,232 @@ server <- function(input, output, session) {
     })
   })
   
+  # =================== PROPORTION & VARIANCE TESTS ===================
+  observeEvent(input$run_prop_var_test, {
+    req(input$prop_var_variable, input$prop_var_test_type)
+    
+    var_data <- values$current_data[[input$prop_var_variable]]
+    var_data <- var_data[!is.na(var_data)]
+    
+    if (input$prop_var_test_type == "prop_one") {
+      # One sample proportion test
+      # Convert to binary if needed
+      if (is.numeric(var_data)) {
+        # Convert to binary based on median
+        binary_data <- ifelse(var_data > median(var_data, na.rm = TRUE), 1, 0)
+      } else {
+        # Assume already categorical
+        unique_vals <- unique(var_data)
+        binary_data <- ifelse(var_data == unique_vals[1], 1, 0)
+      }
+      
+      successes <- sum(binary_data)
+      n <- length(binary_data)
+      
+      test_result <- prop.test(successes, n, p = input$prop_test_value)
+      
+      output$prop_var_result <- renderText({
+        paste0(
+          "HIPOTESIS UJI PROPORSI SATU SAMPEL:\n\n",
+          "H₀: p = ", input$prop_test_value, " (proporsi populasi sama dengan nilai uji)\n",
+          "H₁: p ≠ ", input$prop_test_value, " (proporsi populasi berbeda dari nilai uji)\n\n",
+          "HASIL UJI PROPORSI SATU SAMPEL:\n\n",
+          "• Chi-squared statistic: ", round(test_result$statistic, 4), "\n",
+          "• df: ", test_result$parameter, "\n",
+          "• p-value: ", format(test_result$p.value, scientific = TRUE), "\n",
+          "• Confidence Interval: [", paste(round(test_result$conf.int, 4), collapse = ", "), "]\n",
+          "• Sample proportion: ", round(test_result$estimate, 4), "\n",
+          "• Test value: ", input$prop_test_value, "\n",
+          "• Sample size: ", n
+        )
+      })
+      
+    } else if (input$prop_var_test_type == "var_one") {
+      # One sample variance test (Chi-square test)
+      sample_var <- var(var_data, na.rm = TRUE)
+      n <- length(var_data)
+      chi_stat <- (n - 1) * sample_var / input$var_test_value
+      p_value <- 2 * pmin(pchisq(chi_stat, n - 1), 1 - pchisq(chi_stat, n - 1))
+      
+      output$prop_var_result <- renderText({
+        paste0(
+          "HIPOTESIS UJI VARIANS SATU SAMPEL:\n\n",
+          "H₀: σ² = ", input$var_test_value, " (varians populasi sama dengan nilai uji)\n",
+          "H₁: σ² ≠ ", input$var_test_value, " (varians populasi berbeda dari nilai uji)\n\n",
+          "HASIL UJI VARIANS SATU SAMPEL:\n\n",
+          "• Chi-squared statistic: ", round(chi_stat, 4), "\n",
+          "• df: ", n - 1, "\n",
+          "• p-value: ", format(p_value, scientific = TRUE), "\n",
+          "• Sample variance: ", round(sample_var, 4), "\n",
+          "• Test value: ", input$var_test_value, "\n",
+          "• Sample size: ", n
+        )
+      })
+      
+    } else if (input$prop_var_test_type == "prop_two" && !is.null(input$group_var_prop)) {
+      # Two sample proportion test
+      group_data <- values$current_data[[input$group_var_prop]]
+      test_data <- data.frame(value = var_data, group = group_data)
+      test_data <- test_data[complete.cases(test_data), ]
+      
+      groups <- unique(test_data$group)
+      if (length(groups) >= 2) {
+        group1_data <- test_data$value[test_data$group == groups[1]]
+        group2_data <- test_data$value[test_data$group == groups[2]]
+        
+        # Convert to binary
+        if (is.numeric(group1_data)) {
+          median_val <- median(c(group1_data, group2_data), na.rm = TRUE)
+          binary1 <- ifelse(group1_data > median_val, 1, 0)
+          binary2 <- ifelse(group2_data > median_val, 1, 0)
+        } else {
+          unique_val <- unique(c(group1_data, group2_data))[1]
+          binary1 <- ifelse(group1_data == unique_val, 1, 0)
+          binary2 <- ifelse(group2_data == unique_val, 1, 0)
+        }
+        
+        successes <- c(sum(binary1), sum(binary2))
+        totals <- c(length(binary1), length(binary2))
+        
+        test_result <- prop.test(successes, totals)
+        
+        output$prop_var_result <- renderText({
+          paste0(
+            "HIPOTESIS UJI PROPORSI DUA SAMPEL:\n\n",
+            "H₀: p₁ = p₂ (proporsi kedua kelompok sama)\n",
+            "H₁: p₁ ≠ p₂ (proporsi kedua kelompok berbeda)\n\n",
+            "HASIL UJI PROPORSI DUA SAMPEL:\n\n",
+            "• Chi-squared statistic: ", round(test_result$statistic, 4), "\n",
+            "• df: ", test_result$parameter, "\n",
+            "• p-value: ", format(test_result$p.value, scientific = TRUE), "\n",
+            "• Proportion Group 1 (", groups[1], "): ", round(test_result$estimate[1], 4), "\n",
+            "• Proportion Group 2 (", groups[2], "): ", round(test_result$estimate[2], 4)
+          )
+        })
+      }
+      
+    } else if (input$prop_var_test_type == "var_two" && !is.null(input$group_var_prop)) {
+      # Two sample variance test (F-test)
+      group_data <- values$current_data[[input$group_var_prop]]
+      test_data <- data.frame(value = var_data, group = group_data)
+      test_data <- test_data[complete.cases(test_data), ]
+      
+      groups <- unique(test_data$group)
+      if (length(groups) >= 2) {
+        group1_data <- test_data$value[test_data$group == groups[1]]
+        group2_data <- test_data$value[test_data$group == groups[2]]
+        
+        test_result <- var.test(group1_data, group2_data)
+        
+        output$prop_var_result <- renderText({
+          paste0(
+            "HIPOTESIS UJI VARIANS DUA SAMPEL:\n\n",
+            "H₀: σ₁² = σ₂² (varians kedua kelompok sama)\n",
+            "H₁: σ₁² ≠ σ₂² (varians kedua kelompok berbeda)\n\n",
+            "HASIL UJI VARIANS DUA SAMPEL (F-TEST):\n\n",
+            "• F-statistic: ", round(test_result$statistic, 4), "\n",
+            "• df num: ", test_result$parameter[1], "\n",
+            "• df den: ", test_result$parameter[2], "\n",
+            "• p-value: ", format(test_result$p.value, scientific = TRUE), "\n",
+            "• Confidence Interval: [", paste(round(test_result$conf.int, 4), collapse = ", "), "]\n",
+            "• Variance ratio: ", round(test_result$estimate, 4)
+          )
+        })
+      }
+    }
+    
+    # Interpretation
+    output$prop_var_interpretation <- renderText({
+      if (exists("test_result")) {
+        interpretation <- if (test_result$p.value < 0.05) {
+          paste0("INTERPRETASI HASIL UJI:\n\n",
+                 "Hasil menunjukkan perbedaan yang signifikan secara statistik (p = ", 
+                 round(test_result$p.value, 4), ").\n\n",
+                 "KESIMPULAN:\n",
+                 "• Tolak H₀, terima H₁\n",
+                 "• Terdapat perbedaan signifikan pada parameter yang diuji\n",
+                 "• Hasil tidak disebabkan oleh kebetulan (α = 0.05)")
+        } else {
+          paste0("INTERPRETASI HASIL UJI:\n\n",
+                 "Hasil menunjukkan tidak ada perbedaan yang signifikan secara statistik (p = ", 
+                 round(test_result$p.value, 4), ").\n\n",
+                 "KESIMPULAN:\n",
+                 "• Gagal tolak H₀\n",
+                 "• Tidak terdapat perbedaan signifikan pada parameter yang diuji\n",
+                 "• Perbedaan yang diamati bisa disebabkan oleh kebetulan")
+        }
+        return(interpretation)
+      }
+    })
+    
+    # Create plot
+    output$prop_var_plot <- renderPlotly({
+      if (input$prop_var_test_type %in% c("prop_one", "prop_two")) {
+        # Plot for proportion tests
+        if (input$prop_var_test_type == "prop_one") {
+          p <- ggplot(data.frame(x = c("Tidak", "Ya"), y = c(length(var_data) - sum(binary_data), sum(binary_data))), 
+                      aes(x = x, y = y)) +
+            geom_bar(stat = "identity", fill = c("#ff7f0e", "#1f77b4"), alpha = 0.7) +
+            labs(title = "Distribusi Proporsi", x = "Kategori", y = "Frekuensi") +
+            theme_minimal()
+        } else {
+          plot_data <- data.frame(
+            value = c(group1_data, group2_data),
+            group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
+          )
+          p <- ggplot(plot_data, aes(x = group, fill = group)) +
+            geom_bar(alpha = 0.7) +
+            labs(title = "Perbandingan Proporsi antar Kelompok") +
+            theme_minimal()
+        }
+      } else {
+        # Plot for variance tests
+        if (input$prop_var_test_type == "var_one") {
+          p <- ggplot(data.frame(x = var_data), aes(x = x)) +
+            geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
+            geom_vline(xintercept = mean(var_data), color = "red", linetype = "dashed") +
+            labs(title = "Distribusi Data dengan Mean (garis merah)") +
+            theme_minimal()
+        } else {
+          plot_data <- data.frame(
+            value = c(group1_data, group2_data),
+            group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
+          )
+          p <- ggplot(plot_data, aes(x = group, y = value, fill = group)) +
+            geom_boxplot(alpha = 0.7) +
+            labs(title = "Perbandingan Varians antar Kelompok") +
+            theme_minimal()
+        }
+      }
+      ggplotly(p)
+    })
+  })
+  
   # =================== ANOVA TESTS ===================
   observeEvent(input$run_anova, {
     req(input$anova_dependent, input$anova_factor1)
     
-    if (input$anova_type == "oneway") {
-      formula_str <- paste(input$anova_dependent, "~", input$anova_factor1)
-      anova_model <- aov(as.formula(formula_str), data = values$current_data)
-      anova_summary <- summary(anova_model)
-      
+    # Clean and filter data
+    anova_data <- values$current_data[c(input$anova_dependent, input$anova_factor1)]
+    if (input$anova_type == "twoway" && !is.null(input$anova_factor2)) {
+      anova_data <- values$current_data[c(input$anova_dependent, input$anova_factor1, input$anova_factor2)]
+    }
+    anova_data <- anova_data[complete.cases(anova_data), ]
+    
+    if (nrow(anova_data) < 5) {
       output$anova_result <- renderText({
+        "Error: Data tidak cukup untuk melakukan analisis ANOVA. Minimum 5 observasi diperlukan."
+      })
+      return()
+    }
+    
+    tryCatch({
+      if (input$anova_type == "oneway") {
+        formula_str <- paste(input$anova_dependent, "~", input$anova_factor1)
+        anova_model <- aov(as.formula(formula_str), data = anova_data)
+        anova_summary <- summary(anova_model)
+        
+        # Extract statistics safely
         f_stat <- anova_summary[[1]]$`F value`[1]
         p_val <- anova_summary[[1]]$`Pr(>F)`[1]
         df1 <- anova_summary[[1]]$Df[1]
@@ -2396,112 +2625,142 @@ server <- function(input, output, session) {
         mean_sq_between <- anova_summary[[1]]$`Mean Sq`[1]
         mean_sq_within <- anova_summary[[1]]$`Mean Sq`[2]
         
-        paste0(
-          "**HIPOTESIS UJI ANOVA SATU ARAH:**\n\n",
-          "• H₀: μ₁ = μ₂ = ... = μₖ (semua rata-rata grup sama)\n",
-          "• H₁: Minimal ada satu rata-rata grup yang berbeda\n\n",
-          "**HASIL UJI ANOVA SATU ARAH:**\n\n",
-          "**Sumber Variasi: Antar Grup**\n",
-          "• Sum of Squares: ", round(sum_sq_between, 4), "\n",
-          "• df: ", df1, "\n",
-          "• Mean Square: ", round(mean_sq_between, 4), "\n\n",
-          "**Sumber Variasi: Dalam Grup (Error)**\n",
-          "• Sum of Squares: ", round(sum_sq_within, 4), "\n",
-          "• df: ", df2, "\n",
-          "• Mean Square: ", round(mean_sq_within, 4), "\n\n",
-          "• F-statistic: ", round(f_stat, 4), "\n",
-          "• p-value: ", format(p_val, scientific = TRUE)
-        )
-      })
+        output$anova_result <- renderText({
+          paste0(
+            "HIPOTESIS UJI ANOVA SATU ARAH:\n\n",
+            "H₀: μ₁ = μ₂ = ... = μₖ (semua rata-rata grup sama)\n",
+            "H₁: Minimal ada satu rata-rata grup yang berbeda\n\n",
+            "HASIL UJI ANOVA SATU ARAH:\n\n",
+            "Sumber Variasi: Antar Grup\n",
+            "• Sum of Squares: ", round(sum_sq_between, 4), "\n",
+            "• df: ", df1, "\n",
+            "• Mean Square: ", round(mean_sq_between, 4), "\n\n",
+            "Sumber Variasi: Dalam Grup (Error)\n",
+            "• Sum of Squares: ", round(sum_sq_within, 4), "\n",
+            "• df: ", df2, "\n",
+            "• Mean Square: ", round(mean_sq_within, 4), "\n\n",
+            "• F-statistic: ", round(f_stat, 4), "\n",
+            "• p-value: ", format(p_val, scientific = TRUE)
+          )
+        })
       
-      output$anova_interpretation <- renderText({
-        basic_interp <- create_interpretation(anova_summary[[1]], "anova")
+        output$anova_interpretation <- renderText({
+          basic_interp <- create_interpretation(anova_summary[[1]], "anova")
+          
+          detailed_interp <- paste0(
+            "INTERPRETASI ANOVA LENGKAP:\n\n",
+            basic_interp, "\n\n",
+            "PENJELASAN STATISTIK:\n",
+            "• F-statistic: ", round(f_stat, 4), "\n",
+            "• df antara grup: ", df1, "\n",
+            "• df dalam grup: ", df2, "\n",
+            "• p-value: ", format(p_val, scientific = TRUE), "\n\n",
+            "EFFECT SIZE:\n",
+            "• Eta-squared (η²) ≈ ", round(anova_summary[[1]]$`Sum Sq`[1] / sum(anova_summary[[1]]$`Sum Sq`), 3), "\n",
+            "  • 0.01: Small effect\n",
+            "  • 0.06: Medium effect\n",
+            "  • 0.14: Large effect\n\n",
+            "KRITERIA KEPUTUSAN:\n",
+            "• α = 0.05 (tingkat signifikansi)\n",
+            "• Jika p-value < 0.05: Tolak H₀\n",
+            "• Jika p-value ≥ 0.05: Gagal tolak H₀\n\n",
+            "KESIMPULAN:\n",
+            if (p_val < 0.05) {
+              "Terdapat perbedaan signifikan antar kelompok.\n• Hasil mendukung H₁\n• Lanjutkan dengan uji post-hoc untuk mengetahui kelompok mana yang berbeda."
+            } else {
+              "Tidak terdapat perbedaan signifikan antar kelompok.\n• Hasil mendukung H₀\n• Semua kelompok memiliki rata-rata yang sama secara statistik."
+            }
+          )
+          
+          return(detailed_interp)
+        })
         
-        f_stat <- anova_summary[[1]]$`F value`[1]
-        p_val <- anova_summary[[1]]$`Pr(>F)`[1]
-        df1 <- anova_summary[[1]]$Df[1]
-        df2 <- anova_summary[[1]]$Df[2]
-        
-        detailed_interp <- paste0(
-          "**INTERPRETASI ANOVA LENGKAP:**\n\n",
-          basic_interp, "\n\n",
-          "**PENJELASAN STATISTIK:**\n",
-          "• F-statistic: ", round(f_stat, 4), "\n",
-          "• df antara grup: ", df1, "\n",
-          "• df dalam grup: ", df2, "\n",
-          "• p-value: ", format(p_val, scientific = TRUE), "\n\n",
-          "**EFFECT SIZE:**\n",
-          "• Eta-squared (η²) ≈ ", round(anova_summary[[1]]$`Sum Sq`[1] / sum(anova_summary[[1]]$`Sum Sq`), 3), "\n",
-          "  • 0.01: Small effect\n",
-          "  • 0.06: Medium effect\n",
-          "  • 0.14: Large effect\n\n",
-          "**KRITERIA KEPUTUSAN:**\n",
-          "• α = 0.05 (tingkat signifikansi)\n",
-          "• Jika p-value < 0.05: Tolak H₀\n",
-          "• Jika p-value ≥ 0.05: Gagal tolak H₀\n\n",
-          "**KESIMPULAN:**\n",
-          if (p_val < 0.05) {
-            "Terdapat perbedaan signifikan antar kelompok.\n• Hasil mendukung H₁\n• Lanjutkan dengan uji post-hoc untuk mengetahui kelompok mana yang berbeda."
-          } else {
-            "Tidak terdapat perbedaan signifikan antar kelompok.\n• Hasil mendukung H₀\n• Semua kelompok memiliki rata-rata yang sama secara statistik."
-          }
-        )
-        
-        return(detailed_interp)
-      })
+        if (input$post_hoc) {
+          tryCatch({
+            tukey_result <- TukeyHSD(anova_model)
+            output$posthoc_result <- renderText({
+              paste("POST-HOC TEST (TUKEY HSD):\n\n", capture.output(print(tukey_result)))
+            })
+          }, error = function(e) {
+            output$posthoc_result <- renderText({
+              paste("Error dalam post-hoc test:", e$message)
+            })
+          })
+        }
       
-      if (input$post_hoc) {
-        tukey_result <- TukeyHSD(anova_model)
-        output$posthoc_result <- renderText({
-          capture.output(print(tukey_result))
+      } else if (input$anova_type == "twoway" && !is.null(input$anova_factor2)) {
+        if (input$anova_interaction) {
+          formula_str <- paste(input$anova_dependent, "~", input$anova_factor1, "*", input$anova_factor2)
+        } else {
+          formula_str <- paste(input$anova_dependent, "~", input$anova_factor1, "+", input$anova_factor2)
+        }
+        
+        anova_model <- aov(as.formula(formula_str), data = anova_data)
+        anova_summary <- summary(anova_model)
+        
+        output$anova_result <- renderText({
+          paste("HASIL UJI ANOVA DUA ARAH:\n\n", capture.output(print(anova_summary)))
+        })
+        
+        output$anova_interpretation <- renderText({
+          "INTERPRETASI ANOVA DUA ARAH:\n\nANOVA dua arah menguji efek utama dari dua faktor dan interaksi antar faktor terhadap variabel dependen."
         })
       }
       
-    } else if (input$anova_type == "twoway" && !is.null(input$anova_factor2)) {
-      if (input$anova_interaction) {
-        formula_str <- paste(input$anova_dependent, "~", input$anova_factor1, "*", input$anova_factor2)
-      } else {
-        formula_str <- paste(input$anova_dependent, "~", input$anova_factor1, "+", input$anova_factor2)
-      }
-      
-      anova_model <- aov(as.formula(formula_str), data = values$current_data)
-      anova_summary <- summary(anova_model)
-      
-      output$anova_result <- renderText({
-        capture.output(print(anova_summary))
+      # Create ANOVA plots
+      output$anova_plots <- renderPlotly({
+        tryCatch({
+          if (input$anova_type == "oneway") {
+            p1 <- ggplot(anova_data, aes_string(x = input$anova_factor1, y = input$anova_dependent)) +
+              geom_boxplot(aes_string(fill = input$anova_factor1), alpha = 0.7, 
+                          outlier.shape = 16, outlier.size = 2, size = 1.2, width = 0.6) +
+              geom_jitter(width = 0.2, alpha = 0.5, size = 1) +
+              labs(title = "Perbandingan Kelompok (Box Plot)", 
+                   x = input$anova_factor1, y = input$anova_dependent) +
+              theme_minimal() +
+              theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                    legend.position = "none")
+            
+            # Residuals plot
+            residuals_data <- data.frame(
+              fitted = fitted(anova_model),
+              residuals = residuals(anova_model)
+            )
+            
+            p2 <- ggplot(residuals_data, aes(x = fitted, y = residuals)) +
+              geom_point(alpha = 0.6, size = 2) +
+              geom_hline(yintercept = 0, color = "red", linetype = "dashed", size = 1) +
+              geom_smooth(se = FALSE, color = "blue", size = 1) +
+              labs(title = "Residuals vs Fitted Values", 
+                   x = "Fitted Values", y = "Residuals") +
+              theme_minimal()
+            
+            subplot(ggplotly(p1), ggplotly(p2), nrows = 1, 
+                    subplot_titles = c("Group Comparisons", "Residual Analysis"))
+          } else {
+            p <- ggplot(anova_data, aes_string(x = input$anova_factor1, y = input$anova_dependent, 
+                                              fill = input$anova_factor2)) +
+              geom_boxplot(alpha = 0.7) +
+              labs(title = "Two-Way ANOVA Visualization", 
+                   x = input$anova_factor1, y = input$anova_dependent,
+                   fill = input$anova_factor2) +
+              theme_minimal() +
+              theme(axis.text.x = element_text(angle = 45, hjust = 1))
+            ggplotly(p)
+          }
+        }, error = function(e) {
+          plotly::plot_ly() %>% plotly::add_text(text = paste("Error creating plot:", e$message))
+        })
       })
-    }
-    
-    # Create ANOVA plots
-    output$anova_plots <- renderPlotly({
-      if (input$anova_type == "oneway") {
-        p1 <- ggplot(values$current_data, aes_string(x = input$anova_factor1, y = input$anova_dependent)) +
-          geom_boxplot(aes_string(fill = input$anova_factor1), alpha = 0.7) +
-          geom_jitter(width = 0.2, alpha = 0.5) +
-          labs(title = "Group Comparisons") +
-          theme_minimal()
-        
-        # Residuals plot
-        residuals_data <- data.frame(
-          fitted = fitted(anova_model),
-          residuals = residuals(anova_model)
-        )
-        
-        p2 <- ggplot(residuals_data, aes(x = fitted, y = residuals)) +
-          geom_point(alpha = 0.6) +
-          geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-          geom_smooth(se = FALSE, color = "blue") +
-          labs(title = "Residuals vs Fitted") +
-          theme_minimal()
-        
-        subplot(ggplotly(p1), ggplotly(p2), nrows = 1)
-      } else {
-        p <- ggplot(values$current_data, aes_string(x = input$anova_factor1, y = input$anova_dependent, fill = input$anova_factor2)) +
-          geom_boxplot(alpha = 0.7) +
-          labs(title = "Two-Way ANOVA Visualization") +
-          theme_minimal()
-        ggplotly(p)
-      }
+      
+    }, error = function(e) {
+      output$anova_result <- renderText({
+        paste("Error dalam analisis ANOVA:", e$message)
+      })
+      
+      output$anova_interpretation <- renderText({
+        "Error: Tidak dapat melakukan analisis ANOVA. Periksa data dan variabel yang dipilih."
+      })
     })
   })
   
@@ -2546,15 +2805,15 @@ server <- function(input, output, session) {
       
       output$regression_summary <- renderText({
         paste0(
-          "**HIPOTESIS UJI REGRESI LINEAR BERGANDA:**\n\n",
-          "• H₀: β₁ = β₂ = ... = βₖ = 0 (semua koefisien regresi sama dengan nol)\n",
-          "• H₁: Minimal ada satu βᵢ ≠ 0 (minimal ada satu prediktor yang signifikan)\n\n",
-          "**RINGKASAN MODEL:**\n\n",
+          "HIPOTESIS UJI REGRESI LINEAR BERGANDA:\n\n",
+          "H₀: β₁ = β₂ = ... = βₖ = 0 (semua koefisien regresi sama dengan nol)\n",
+          "H₁: Minimal ada satu βᵢ ≠ 0 (minimal ada satu prediktor yang signifikan)\n\n",
+          "RINGKASAN MODEL:\n\n",
           "• R-squared: ", round(r_squared, 4), " (", round(r_squared*100, 2), "% varians dijelaskan)\n",
           "• Adjusted R-squared: ", round(adj_r_squared, 4), "\n",
           "• F-statistic: ", round(f_stat[1], 4), " (p-value: ", format(p_value, scientific = TRUE), ")\n",
           "• Jumlah observasi: ", nrow(reg_data), "\n\n",
-          "**TABEL KOEFISIEN:**\n\n",
+          "TABEL KOEFISIEN:\n\n",
           capture.output(print(reg_summary$coefficients))
         )
       })
@@ -2580,27 +2839,56 @@ server <- function(input, output, session) {
       })
       
       if (input$reg_assumptions) {
-        # Test assumptions
-        norm_test <- shapiro.test(residuals(reg_model))
-        homo_test <- car::ncvTest(reg_model)
-        
-        output$regression_assumptions <- renderText({
-          paste0(
-            "**UJI ASUMSI REGRESI:**\n\n",
-            "**1. Normalitas Residual (Shapiro-Wilk):**\n",
-            "• Statistik: ", round(norm_test$statistic, 4), "\n",
-            "• p-value: ", format(norm_test$p.value, scientific = TRUE), "\n\n",
-            "**2. Homoskedastisitas (Breusch-Pagan):**\n",
-            "• Statistik: ", round(homo_test$ChiSquare, 4), "\n",
-            "• p-value: ", format(homo_test$p, scientific = TRUE), "\n\n",
-            "**3. Multikolinearitas (VIF):**\n",
-            if (length(input$reg_independent) > 1) {
+        # Test assumptions with error handling
+        tryCatch({
+          # Normality test
+          residuals_data <- residuals(reg_model)
+          if (length(residuals_data) <= 5000 && length(residuals_data) >= 3) {
+            norm_test <- shapiro.test(residuals_data)
+          } else {
+            norm_test <- list(statistic = NA, p.value = NA)
+          }
+          
+          # Homoscedasticity test
+          tryCatch({
+            homo_test <- car::ncvTest(reg_model)
+          }, error = function(e) {
+            homo_test <<- list(ChiSquare = NA, p = NA)
+          })
+          
+          # VIF calculation
+          vif_text <- if (length(input$reg_independent) > 1) {
+            tryCatch({
               vif_values <- car::vif(reg_model)
-              paste("•", names(vif_values), ":", round(vif_values, 3), collapse = "\n")
-            } else {
-              "• VIF tidak dapat dihitung untuk satu prediktor"
-            }
-          )
+              if (is.matrix(vif_values)) {
+                # Handle matrix output from vif
+                vif_values <- vif_values[, 1]
+              }
+              paste(paste("•", names(vif_values), ":", round(vif_values, 3)), collapse = "\n")
+            }, error = function(e) {
+              "• Error calculating VIF - možda postoji savršena kolinearnost"
+            })
+          } else {
+            "• VIF tidak dapat dihitung untuk satu prediktor"
+          }
+        
+          output$regression_assumptions <- renderText({
+            paste0(
+              "UJI ASUMSI REGRESI:\n\n",
+              "1. Normalitas Residual (Shapiro-Wilk):\n",
+              "• Statistik: ", ifelse(is.na(norm_test$statistic), "N/A", round(norm_test$statistic, 4)), "\n",
+              "• p-value: ", ifelse(is.na(norm_test$p.value), "N/A", format(norm_test$p.value, scientific = TRUE)), "\n\n",
+              "2. Homoskedastisitas (Breusch-Pagan):\n",
+              "• Statistik: ", ifelse(is.na(homo_test$ChiSquare), "N/A", round(homo_test$ChiSquare, 4)), "\n",
+              "• p-value: ", ifelse(is.na(homo_test$p), "N/A", format(homo_test$p, scientific = TRUE)), "\n\n",
+              "3. Multikolinearitas (VIF):\n",
+              vif_text
+            )
+          })
+        }, error = function(e) {
+          output$regression_assumptions <- renderText({
+            paste("Error dalam uji asumsi:", e$message)
+          })
         })
         
         output$assumptions_interpretation <- renderText({
