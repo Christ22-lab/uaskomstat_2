@@ -1248,9 +1248,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Pemetaan Data - Visualisasi Spasial", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk membuat visualisasi data dalam bentuk peta interaktif untuk menganalisis pola geografis dan distribusi spasial."),
-                        p(strong("⚡ Fitur Utama:"), "Heat map, choropleth map, point map dengan koordinat geografis, legenda interaktif, dan fitur zoom/pan pada peta Leaflet."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih variabel untuk dipetakan, 2) Tentukan jenis peta, 3) Buat peta interaktif, 4) Analisis pola spasial dan download peta.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk membuat visualisasi data dalam bentuk peta interaktif untuk menganalisis pola geografis dan distribusi spasial."),
+                        p(strong("Fitur Utama:"), "Heat map, choropleth map, point map dengan koordinat geografis, legenda interaktif, dan fitur zoom/pan pada peta Leaflet."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih variabel untuk dipetakan, 2) Tentukan jenis peta, 3) Buat peta interaktif, 4) Analisis pola spasial dan download peta.")
                     )
                 )
               ),
@@ -1286,9 +1286,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Uji Asumsi Data - Verifikasi Prasyarat Statistik", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk menguji asumsi-asumsi dasar yang diperlukan sebelum melakukan analisis statistik parametrik."),
-                        p(strong("⚡ Fitur Utama:"), "Uji normalitas (Shapiro-Wilk/Anderson-Darling), uji homogenitas varians (Levene's test), visualisasi Q-Q plot dan histogram untuk validasi asumsi."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih variabel untuk diuji, 2) Tentukan variabel kelompok untuk uji homogenitas, 3) Jalankan uji asumsi, 4) Interpretasi hasil untuk menentukan metode analisis yang sesuai.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menguji asumsi-asumsi dasar yang diperlukan sebelum melakukan analisis statistik parametrik."),
+                        p(strong("Fitur Utama:"), "Uji normalitas (Shapiro-Wilk/Anderson-Darling), uji homogenitas varians (Levene's test), visualisasi Q-Q plot dan histogram untuk validasi asumsi."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih variabel untuk diuji, 2) Tentukan variabel kelompok untuk uji homogenitas, 3) Jalankan uji asumsi, 4) Interpretasi hasil untuk menentukan metode analisis yang sesuai.")
                     )
                 )
               ),
@@ -1343,9 +1343,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Uji Rata-rata - Pengujian Hipotesis Mean", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk menguji hipotesis tentang rata-rata populasi menggunakan uji t (satu sampel, dua sampel independen, atau berpasangan)."),
-                        p(strong("⚡ Fitur Utama:"), "One sample t-test, two sample t-test, paired t-test dengan confidence interval, visualisasi distribusi, dan interpretasi statistik lengkap."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih jenis uji t-test, 2) Tentukan variabel dan parameter uji, 3) Set confidence level, 4) Jalankan uji dan interpretasi hasil keputusan H₀/H₁.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menguji hipotesis tentang rata-rata populasi menggunakan uji t (satu sampel, dua sampel independen, atau berpasangan)."),
+                        p(strong("Fitur Utama:"), "One sample t-test, two sample t-test, paired t-test dengan confidence interval, visualisasi distribusi, dan interpretasi statistik lengkap."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih jenis uji t-test, 2) Tentukan variabel dan parameter uji, 3) Set confidence level, 4) Jalankan uji dan interpretasi hasil keputusan H₀/H₁.")
                     )
                 )
               ),
@@ -1442,9 +1442,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "ANOVA - Analisis Varians untuk Perbandingan Multiple Group", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk menguji perbedaan rata-rata antar multiple kelompok menggunakan Analysis of Variance (ANOVA) satu arah atau dua arah."),
-                        p(strong("⚡ Fitur Utama:"), "One-way ANOVA, two-way ANOVA dengan/tanpa interaksi, post-hoc test (Tukey HSD), visualisasi perbandingan kelompok, dan plot diagnostik residual."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih jenis ANOVA, 2) Tentukan variabel dependen dan faktor, 3) Set opsi interaksi dan post-hoc, 4) Jalankan analisis dan interpretasi hasil F-test.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menguji perbedaan rata-rata antar multiple kelompok menggunakan Analysis of Variance (ANOVA) satu arah atau dua arah."),
+                        p(strong("Fitur Utama:"), "One-way ANOVA, two-way ANOVA dengan/tanpa interaksi, post-hoc test (Tukey HSD), visualisasi perbandingan kelompok, dan plot diagnostik residual."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih jenis ANOVA, 2) Tentukan variabel dependen dan faktor, 3) Set opsi interaksi dan post-hoc, 4) Jalankan analisis dan interpretasi hasil F-test.")
                     )
                 )
               ),
@@ -1497,9 +1497,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Regresi Linear Berganda - Analisis Hubungan dan Prediksi", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk menganalisis hubungan linear antara variabel dependen dengan satu atau lebih variabel independen menggunakan regresi linear berganda."),
-                        p(strong("⚡ Fitur Utama:"), "Model regresi berganda, uji asumsi (normalitas, homoskedastisitas, multikolinearitas), diagnostik model (Cook's distance, leverage), dan plot diagnostik komprehensif."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih variabel dependen dan independen, 2) Set opsi uji asumsi dan diagnostik, 3) Jalankan regresi, 4) Evaluasi model dan interpretasi koefisien serta R-squared.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menganalisis hubungan linear antara variabel dependen dengan satu atau lebih variabel independen menggunakan regresi linear berganda."),
+                        p(strong("Fitur Utama:"), "Model regresi berganda, uji asumsi (normalitas, homoskedastisitas, multikolinearitas), diagnostik model (Cook's distance, leverage), dan plot diagnostik komprehensif."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih variabel dependen dan independen, 2) Set opsi uji asumsi dan diagnostik, 3) Jalankan regresi, 4) Evaluasi model dan interpretasi koefisien serta R-squared.")
                     )
                 )
               ),
