@@ -109,9 +109,10 @@ create_interpretation <- function(test_result, test_type) {
 
 # UI
 ui <- dashboardPage(
-  dashboardHeader(title = "Dashboard Statistik Terpadu - SOVI Analysis"),
+  dashboardHeader(title = "STATeddy"),
   
   dashboardSidebar(
+    width = 250,
     sidebarMenu(
       menuItem("Beranda", tabName = "home", icon = icon("home")),
       menuItem("Manajemen Data", tabName = "data_management", icon = icon("database")),
@@ -218,60 +219,112 @@ ui <- dashboardPage(
           font-size: 1.25rem;
         }
         
-        /* Sidebar Styling */
+        /* Fixed Sidebar Styling */
         .main-sidebar {
           background: white !important;
           box-shadow: var(--shadow-xl);
           border-right: 1px solid var(--gray-200);
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          height: 100vh !important;
+          z-index: 1050 !important;
+          overflow-y: auto !important;
+          width: 250px !important;
+        }
+        
+        /* Header spacing fix */
+        .main-header .navbar-brand {
+          color: white !important;
+          font-weight: 700 !important;
+          font-size: 1.5rem !important;
+          letter-spacing: 0.5px !important;
+          text-transform: uppercase !important;
+          padding: 15px 20px !important;
+        }
+        
+        /* Sidebar menu spacing and typography */
+        .sidebar-menu {
+          margin-top: 20px !important;
+          padding: 0 10px !important;
+        }
+        
+        .sidebar-menu > li {
+          margin-bottom: 4px !important;
         }
         
         .sidebar-menu > li > a {
           color: var(--gray-700) !important;
-          font-weight: 500;
-          padding: 10px 16px;
-          border-radius: var(--border-radius-sm);
-          margin: 2px 6px;
-          transition: var(--transition);
-          font-size: 14px; /* Standardized font size */
+          font-weight: 500 !important;
+          font-size: 15px !important;
+          padding: 12px 16px !important;
+          border-radius: 8px !important;
+          margin: 0 !important;
+          transition: all 0.3s ease !important;
+          line-height: 1.4 !important;
+          display: flex !important;
+          align-items: center !important;
         }
         
         .sidebar-menu > li > a:hover,
         .sidebar-menu > li.active > a {
           background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
           color: white !important;
-          transform: translateX(4px);
-          box-shadow: var(--shadow-md);
+          transform: translateX(4px) !important;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
         }
         
         .sidebar-menu > li > a > .fa,
         .sidebar-menu > li > a > .glyphicon,
         .sidebar-menu > li > a > .ion {
-          margin-right: 12px;
-          font-size: 14px;
+          margin-right: 12px !important;
+          font-size: 16px !important;
+          width: 20px !important;
+          text-align: center !important;
+          min-width: 20px !important;
         }
         
-        /* Fix for sub-menu background and font size */
+        /* Sub-menu styling */
         .treeview-menu {
-          background: white !important; /* Ensure sub-menu background is white */
-          padding-left: 0; /* Remove default padding */
+          background: transparent !important;
+          padding: 0 !important;
+          margin-top: 5px !important;
+          margin-bottom: 10px !important;
+        }
+
+        .treeview-menu > li {
+          margin-bottom: 2px !important;
         }
 
         .treeview-menu > li > a {
           color: var(--gray-600) !important;
-          padding: 8px 20px 8px 40px;
-          font-size: 13px; /* Standardized font size for sub-menu items */
-          transition: var(--transition);
-          border-radius: 0 !important; /* Remove border-radius for sub-menu items */
-          margin: 0; /* Remove margin for sub-menu items */
+          font-size: 14px !important;
+          font-weight: 400 !important;
+          padding: 8px 16px 8px 45px !important;
+          border-radius: 6px !important;
+          margin: 0 !important;
+          transition: all 0.3s ease !important;
+          line-height: 1.4 !important;
         }
         
         .treeview-menu > li > a:hover,
         .treeview-menu > li.active > a {
           background: var(--gray-100) !important;
           color: var(--primary-color) !important;
-          border-left: 3px solid var(--primary-color);
-          transform: none; /* Remove transform for sub-menu items */
-          box-shadow: none; /* Remove shadow for sub-menu items */
+          border-left: 3px solid var(--primary-color) !important;
+          padding-left: 42px !important;
+          transform: none !important;
+          box-shadow: none !important;
+        }
+        
+        /* Adjust main content for fixed sidebar */
+        .content-wrapper {
+          margin-left: 250px !important;
+        }
+        
+        /* Header adjustment for fixed sidebar */
+        .main-header {
+          margin-left: 250px !important;
         }
         
         /* Box/Card Styling - Simplified for browser consistency */
@@ -766,23 +819,46 @@ ui <- dashboardPage(
         
         /* Responsive Design */
         @media (max-width: 768px) {
+          .main-sidebar {
+            transform: translateX(-250px) !important;
+            transition: transform 0.3s ease !important;
+          }
+          
+          .main-sidebar.sidebar-open {
+            transform: translateX(0) !important;
+          }
+          
+          .content-wrapper {
+            margin-left: 0 !important;
+          }
+          
+          .main-header {
+            margin-left: 0 !important;
+          }
+          
           .box-body {
             padding: 16px;
           }
           
           .btn {
             padding: 10px 20px;
-            font-size: 0.95rem; /* Adjusted responsive button font size */
+            font-size: 0.95rem;
           }
           
           .btn-lg {
             padding: 14px 28px;
-            font-size: 1.05rem; /* Adjusted responsive large button font size */
+            font-size: 1.05rem;
           }
           
           .feature-card {
             padding: 20px;
             margin-bottom: 16px;
+          }
+        }
+        
+        @media (min-width: 769px) {
+          .main-sidebar {
+            transform: translateX(0) !important;
           }
         }
         
@@ -977,10 +1053,10 @@ ui <- dashboardPage(
       # =================== BERANDA ===================
       tabItem(tabName = "home",
               fluidRow(
-                box(width = 12, title = "Selamat Datang di Dashboard Statistik Terpadu", status = "primary", solidHeader = TRUE,
+                box(width = 12, title = "Selamat Datang di STATeddy", status = "primary", solidHeader = TRUE,
                     div(class = "fade-in",
                         h3("Tentang Dashboard", class = "text-gradient"),
-                        p("Dashboard Statistik Terpadu adalah aplikasi web interaktif yang dikembangkan untuk analisis data SOVI (Social Vulnerability Index) secara komprehensif. Dashboard ini menyediakan berbagai fitur analisis statistik mulai dari eksplorasi data dasar hingga analisis regresi yang kompleks."),
+                                                 p("STATeddy adalah dashboard statistik interaktif yang dikembangkan untuk analisis data SOVI (Social Vulnerability Index) secara komprehensif. Dashboard ini menyediakan berbagai fitur analisis statistik mulai dari eksplorasi data dasar hingga analisis regresi yang kompleks."),
                         
                         h4("Data yang Digunakan"),
                         tags$ul(
