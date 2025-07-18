@@ -286,10 +286,14 @@ ui <- dashboardPage(
         }
         
         .box-header {
-          background: linear-gradient(135deg, #f9fafb 0%, white 100%) !important;
           border-bottom: 1px solid #e5e7eb !important;
           padding: 16px 20px;
           position: relative;
+        }
+        
+        /* Default header for boxes without status */
+        .box .box-header:not(.box-primary .box-header):not(.box-info .box-header):not(.box-success .box-header):not(.box-warning .box-header) {
+          background: linear-gradient(135deg, #f9fafb 0%, white 100%) !important;
         }
         
         .box-header.with-border {
@@ -309,39 +313,43 @@ ui <- dashboardPage(
         
         /* Status Colors for Boxes */
         .box-primary .box-header {
-          background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-          color: white;
+          background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+          color: white !important;
+          border-bottom: 1px solid var(--primary-dark) !important;
         }
         
         .box-primary .box-title {
-          color: white;
+          color: white !important;
         }
         
         .box-info .box-header {
-          background: linear-gradient(135deg, var(--info-color), #3182ce);
-          color: white;
+          background: linear-gradient(135deg, var(--info-color), #3182ce) !important;
+          color: white !important;
+          border-bottom: 1px solid #3182ce !important;
         }
         
         .box-info .box-title {
-          color: white;
+          color: white !important;
         }
         
         .box-success .box-header {
-          background: linear-gradient(135deg, var(--success-color), #38a169);
-          color: white;
+          background: linear-gradient(135deg, var(--success-color), #38a169) !important;
+          color: white !important;
+          border-bottom: 1px solid #38a169 !important;
         }
         
         .box-success .box-title {
-          color: white;
+          color: white !important;
         }
         
         .box-warning .box-header {
-          background: linear-gradient(135deg, var(--warning-color), #dd6b20);
-          color: white;
+          background: linear-gradient(135deg, var(--warning-color), #dd6b20) !important;
+          color: white !important;
+          border-bottom: 1px solid #dd6b20 !important;
         }
         
         .box-warning .box-title {
-          color: white;
+          color: white !important;
         }
         
         /* Button Styling */
