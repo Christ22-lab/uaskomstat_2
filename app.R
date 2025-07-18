@@ -187,8 +187,13 @@ ui <- dashboardPage(
         
         /* Dashboard Layout */
         .content-wrapper, .right-side {
-          background: var(--gray-50);
+          background: #f8fafc !important;
           min-height: 100vh;
+        }
+        
+        /* Force consistent background */
+        .main-content {
+          background: #f8fafc !important;
         }
         
         /* Header Styling */
@@ -264,32 +269,26 @@ ui <- dashboardPage(
           box-shadow: none; /* Remove shadow for sub-menu items */
         }
         
-        /* Box/Card Styling - Enhanced embossed effect */
+        /* Box/Card Styling - Simplified for browser consistency */
         .box {
-          background: white;
-          border: 1px solid var(--gray-200);
-          border-radius: var(--border-radius);
-          box-shadow: 
-            inset 2px 2px 4px rgba(0, 0, 0, 0.05), /* Subtle inner shadow for top-left */
-            inset -2px -2px 4px rgba(255, 255, 255, 0.7), /* Subtle inner shadow for bottom-right */
-            var(--shadow-md); /* Outer shadow for overall lift */
+          background: white !important;
+          border: 1px solid #e5e7eb !important;
+          border-radius: 12px !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
           margin-bottom: 20px;
           overflow: hidden;
-          transition: var(--transition);
+          transition: all 0.3s ease;
         }
         
         .box:hover {
-          box-shadow: 
-            inset 2px 2px 5px rgba(0, 0, 0, 0.05), /* Slightly less prominent inner shadow on hover */
-            inset -2px -2px 5px rgba(255, 255, 255, 0.7),
-            var(--shadow-lg); /* More prominent outer shadow on hover */
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
           transform: translateY(-2px);
         }
         
         .box-header {
-          background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
-          border-bottom: 1px solid var(--gray-200);
-          padding: 20px 24px;
+          background: linear-gradient(135deg, #f9fafb 0%, white 100%) !important;
+          border-bottom: 1px solid #e5e7eb !important;
+          padding: 16px 20px;
           position: relative;
         }
         
@@ -540,18 +539,19 @@ ui <- dashboardPage(
         
         /* Feature Cards on Home Page */
         .feature-card {
-          background: white;
-          border-radius: var(--border-radius);
-          padding: 24px;
-          box-shadow: var(--shadow-md);
-          transition: var(--transition);
-          border-left: 4px solid var(--primary-color);
+          background: white !important;
+          border-radius: 12px !important;
+          padding: 20px !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+          transition: all 0.3s ease !important;
+          border-left: 4px solid #667eea !important;
           height: 100%;
+          border: 1px solid #e5e7eb !important;
         }
         
         .feature-card:hover {
           transform: translateY(-4px);
-          box-shadow: var(--shadow-xl);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
         }
         
         .feature-card h5 {
@@ -783,80 +783,106 @@ ui <- dashboardPage(
           border-radius: var(--border-radius);
         }
         
-        /* Dark mode support (optional) */
+        /* Browser Compatibility Fixes */
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Force consistent styling across browsers */
+        .content-wrapper {
+          background: #f8fafc !important;
+        }
+        
+        .main-sidebar {
+          background: white !important;
+        }
+        
+        /* Ensure all boxes look consistent */
+        .box, .info-box, .feature-card {
+          border: 1px solid #e5e7eb !important;
+          background: white !important;
+        }
+        
+        /* Fix any dark theme overrides */
+        body.dark-mode .content-wrapper,
+        body.dark-mode .right-side {
+          background: #f8fafc !important;
+        }
+        
+        /* Dark mode support - Override to maintain light theme */
         @media (prefers-color-scheme: dark) {
           .content-wrapper, .right-side {
-            background: var(--gray-900);
-            color: var(--gray-100);
+            background: #f8fafc !important;
+            color: #374151 !important;
           }
           
           .box {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
-            color: var(--gray-100);
-            box-shadow: 
-              inset 3px 3px 7px rgba(0, 0, 0, 0.3), /* Darker inner shadow for top-left */
-              inset -3px -3px 7px rgba(255, 255, 255, 0.15), /* Darker inner shadow for bottom-right */
-              var(--shadow-md); /* Outer shadow for overall lift */
+            background: white !important;
+            border-color: #e5e7eb !important;
+            color: #374151 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
           }
           
+          /* Override all dark mode styles to maintain light theme */
           .form-control {
-            background: var(--gray-800);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: white !important;
+            border-color: #e5e7eb !important;
+            color: #374151 !important;
           }
           .sidebar-menu > li > a {
-            color: var(--gray-300) !important;
+            color: #374151 !important;
           }
           .sidebar-menu > li > a:hover,
           .sidebar-menu > li.active > a {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
             color: white !important;
           }
           .treeview-menu {
-            background: var(--gray-800) !important;
+            background: white !important;
           }
           .treeview-menu > li > a {
-            color: var(--gray-400) !important;
+            color: #6b7280 !important;
           }
           .treeview-menu > li > a:hover,
           .treeview-menu > li.active > a {
-            background: var(--gray-700) !important;
-            color: var(--primary-color) !important;
+            background: #f3f4f6 !important;
+            color: #667eea !important;
           }
           table.dataTable thead th {
-            background: var(--gray-700);
-            color: var(--gray-100);
-            border-bottom-color: var(--gray-600);
+            background: #f9fafb !important;
+            color: #374151 !important;
+            border-bottom-color: #e5e7eb !important;
           }
           table.dataTable tbody tr:hover {
-            background: var(--gray-700);
+            background: #f9fafb !important;
           }
           table.dataTable tbody td {
-            border-bottom-color: var(--gray-800);
+            border-bottom-color: #f3f4f6 !important;
           }
           .interpretation-box {
-            background: linear-gradient(135deg, #1a365d 0%, #2a4365 100%);
-            border-color: var(--info-color);
-            color: var(--gray-100);
+            background: linear-gradient(135deg, #e6fffa 0%, #f0fff4 100%) !important;
+            border-color: #48bb78 !important;
+            color: #374151 !important;
           }
           .interpretation-box h5, .interpretation-box h6 {
-            color: var(--gray-100);
+            color: #1f2937 !important;
           }
           .interpretation-box p, .interpretation-box ul, .interpretation-box li {
-            color: var(--gray-200);
+            color: #374151 !important;
           }
           .info-box {
-            background: var(--gray-800);
-            border-color: var(--gray-700);
-            color: var(--gray-100);
+            background: white !important;
+            border-color: #e5e7eb !important;
+            color: #374151 !important;
           }
           .info-box p, .info-box ul, .info-box li {
-            color: var(--gray-200);
+            color: #6b7280 !important;
           }
           pre, code, .shiny-text-output {
-            background: var(--gray-700);
-            border-color: var(--gray-600);
-            color: var(--gray-100);
+            background: #f9fafb !important;
+            border-color: #e5e7eb !important;
+            color: #1f2937 !important;
           }
         }
       "))
