@@ -2479,8 +2479,45 @@ server <- function(input, output, session) {
   observeEvent(input$run_prop_var_test, {
     req(input$prop_var_variable, input$prop_var_test_type)
     
-    var_data <- values$current_data[[input$prop_var_variable]]
+    # Use transformed data if available
+    data_to_use <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+    
+    # Get variable data with proper validation
+    if (!input$prop_var_variable %in% names(data_to_use)) {
+      output$prop_var_result <- renderText({
+        "ERROR: Variabel tidak ditemukan dalam dataset."
+      })
+      return()
+    }
+    
+    var_data <- data_to_use[[input$prop_var_variable]]
+    
+    # Convert to numeric if needed for variance tests
+    if (input$prop_var_test_type %in% c("var_one", "var_two")) {
+      if (!is.numeric(var_data)) {
+        # Try to convert to numeric
+        var_data_numeric <- suppressWarnings(as.numeric(as.character(var_data)))
+        if (all(is.na(var_data_numeric))) {
+          output$prop_var_result <- renderText({
+            "ERROR: Variabel harus numerik untuk uji varians. Silakan pilih variabel numerik."
+          })
+          return()
+        }
+        var_data <- var_data_numeric
+      }
+    }
+    
+    # Remove missing values
     var_data <- var_data[!is.na(var_data)]
+    
+    # Check minimum data requirements
+    if (length(var_data) < 5) {
+      output$prop_var_result <- renderText({
+        paste0("ERROR: Data tidak cukup untuk analisis. Ditemukan ", length(var_data), 
+               " observasi valid, minimum 5 diperlukan.")
+      })
+      return()
+    }
     
     if (input$prop_var_test_type == "prop_one") {
       # One sample proportion test
@@ -2516,21 +2553,6 @@ server <- function(input, output, session) {
       })
       
     } else if (input$prop_var_test_type == "var_one") {
-      # Data validation
-      if (length(var_data) < 5) {
-        output$prop_var_result <- renderText({
-          "ERROR: Data tidak cukup untuk uji varians. Minimum 5 observasi diperlukan."
-        })
-        return()
-      }
-      
-      if (!is.numeric(var_data)) {
-        output$prop_var_result <- renderText({
-          "ERROR: Variabel harus numerik untuk uji varians."
-        })
-        return()
-      }
-      
       # One sample variance test (Chi-square test)
       sample_var <- var(var_data, na.rm = TRUE)
       n <- length(var_data)
@@ -2557,9 +2579,24 @@ server <- function(input, output, session) {
       
     } else if (input$prop_var_test_type == "prop_two" && !is.null(input$group_var_prop)) {
       # Two sample proportion test
-      group_data <- values$current_data[[input$group_var_prop]]
+      if (!input$group_var_prop %in% names(data_to_use)) {
+        output$prop_var_result <- renderText({
+          "ERROR: Variabel kelompok tidak ditemukan dalam dataset."
+        })
+        return()
+      }
+      
+      group_data <- data_to_use[[input$group_var_prop]]
       test_data <- data.frame(value = var_data, group = group_data)
       test_data <- test_data[complete.cases(test_data), ]
+      
+      if (nrow(test_data) < 10) {
+        output$prop_var_result <- renderText({
+          paste0("ERROR: Data tidak cukup untuk uji dua sampel. Ditemukan ", nrow(test_data), 
+                 " observasi valid, minimum 10 diperlukan.")
+        })
+        return()
+      }
       
       groups <- unique(test_data$group)
       if (length(groups) >= 2) {
@@ -2599,14 +2636,40 @@ server <- function(input, output, session) {
       
     } else if (input$prop_var_test_type == "var_two" && !is.null(input$group_var_prop)) {
       # Two sample variance test (F-test)
-      group_data <- values$current_data[[input$group_var_prop]]
+      if (!input$group_var_prop %in% names(data_to_use)) {
+        output$prop_var_result <- renderText({
+          "ERROR: Variabel kelompok tidak ditemukan dalam dataset."
+        })
+        return()
+      }
+      
+      group_data <- data_to_use[[input$group_var_prop]]
       test_data <- data.frame(value = var_data, group = group_data)
       test_data <- test_data[complete.cases(test_data), ]
+      
+      if (nrow(test_data) < 10) {
+        output$prop_var_result <- renderText({
+          paste0("ERROR: Data tidak cukup untuk uji dua sampel. Ditemukan ", nrow(test_data), 
+                 " observasi valid, minimum 10 diperlukan.")
+        })
+        return()
+      }
       
       groups <- unique(test_data$group)
       if (length(groups) >= 2) {
         group1_data <- test_data$value[test_data$group == groups[1]]
         group2_data <- test_data$value[test_data$group == groups[2]]
+        
+        # Check minimum sample sizes for F-test
+        if (length(group1_data) < 3 || length(group2_data) < 3) {
+          output$prop_var_result <- renderText({
+            paste0("ERROR: Ukuran sampel terlalu kecil untuk uji F.\n",
+                   "Grup ", groups[1], ": ", length(group1_data), " observasi\n",
+                   "Grup ", groups[2], ": ", length(group2_data), " observasi\n",
+                   "Minimum 3 observasi per grup diperlukan.")
+          })
+          return()
+        }
         
         test_result <- var.test(group1_data, group2_data)
         
@@ -2627,96 +2690,170 @@ server <- function(input, output, session) {
       }
     }
     
-    # Interpretation
+    # Interpretation with specific handling for each test type
     output$prop_var_interpretation <- renderText({
       if (exists("test_result")) {
-        interpretation <- if (test_result$p.value < 0.05) {
-          paste0("INTERPRETASI HASIL UJI:\n\n",
-                 "Hasil menunjukkan perbedaan yang signifikan secara statistik (p = ", 
-                 round(test_result$p.value, 4), ").\n\n",
-                 "KESIMPULAN:\n",
-                 "• Tolak H₀, terima H₁\n",
-                 "• Terdapat perbedaan signifikan pada parameter yang diuji\n",
-                 "• Hasil tidak disebabkan oleh kebetulan (α = 0.05)")
+        if (input$prop_var_test_type == "var_one") {
+          # Specific interpretation for one-sample variance test
+          interpretation <- paste0(
+            "INTERPRETASI HASIL UJI VARIANS 1 SAMPEL:\n\n",
+            "HASIL UJI:\n",
+            "• Chi-squared statistic: ", round(test_result$statistic, 4), "\n",
+            "• df: ", test_result$df, "\n",
+            "• p-value: ", format(test_result$p.value, scientific = TRUE), "\n\n",
+            "KEPUTUSAN STATISTIK:\n",
+            if (test_result$p.value < 0.05) {
+              paste0("• Tolak H₀ (p = ", round(test_result$p.value, 4), " < 0.05)\n",
+                     "• Varians populasi BERBEDA secara signifikan dari nilai yang diuji\n",
+                     "• Perbedaan tidak disebabkan oleh kebetulan")
+            } else {
+              paste0("• Gagal tolak H₀ (p = ", round(test_result$p.value, 4), " ≥ 0.05)\n",
+                     "• Varians populasi TIDAK BERBEDA secara signifikan dari nilai yang diuji\n",
+                     "• Data konsisten dengan hipotesis null")
+            }, "\n\n",
+            "IMPLIKASI PRAKTIS:\n",
+            if (test_result$p.value < 0.05) {
+              "• Variabilitas data berbeda dari ekspektasi\n• Perlu investigasi faktor penyebab variabilitas\n• Pertimbangkan transformasi data jika diperlukan"
+            } else {
+              "• Variabilitas data sesuai dengan ekspektasi\n• Model atau asumsi varians dapat diterima\n• Data memiliki konsistensi yang baik"
+            }
+          )
         } else {
-          paste0("INTERPRETASI HASIL UJI:\n\n",
-                 "Hasil menunjukkan tidak ada perbedaan yang signifikan secara statistik (p = ", 
-                 round(test_result$p.value, 4), ").\n\n",
-                 "KESIMPULAN:\n",
-                 "• Gagal tolak H₀\n",
-                 "• Tidak terdapat perbedaan signifikan pada parameter yang diuji\n",
-                 "• Perbedaan yang diamati bisa disebabkan oleh kebetulan")
+          # General interpretation for other tests
+          interpretation <- if (test_result$p.value < 0.05) {
+            paste0("INTERPRETASI HASIL UJI:\n\n",
+                   "Hasil menunjukkan perbedaan yang signifikan secara statistik (p = ", 
+                   round(test_result$p.value, 4), ").\n\n",
+                   "KESIMPULAN:\n",
+                   "• Tolak H₀, terima H₁\n",
+                   "• Terdapat perbedaan signifikan pada parameter yang diuji\n",
+                   "• Hasil tidak disebabkan oleh kebetulan (α = 0.05)")
+          } else {
+            paste0("INTERPRETASI HASIL UJI:\n\n",
+                   "Hasil menunjukkan tidak ada perbedaan yang signifikan secara statistik (p = ", 
+                   round(test_result$p.value, 4), ").\n\n",
+                   "KESIMPULAN:\n",
+                   "• Gagal tolak H₀\n",
+                   "• Tidak terdapat perbedaan signifikan pada parameter yang diuji\n",
+                   "• Perbedaan yang diamati bisa disebabkan oleh kebetulan")
+          }
         }
         return(interpretation)
+      } else {
+        return("Interpretasi akan muncul setelah uji dijalankan.")
       }
     })
     
-    # Create plot
+    # Create plot (moved inside the observe event to access variables)
     output$prop_var_plot <- renderPlotly({
-      tryCatch({
-        if (input$prop_var_test_type %in% c("prop_one", "prop_two")) {
-          # Plot for proportion tests
-          if (input$prop_var_test_type == "prop_one" && exists("binary_data")) {
-            plot_df <- data.frame(
-              kategori = c("Tidak", "Ya"), 
-              frekuensi = c(length(var_data) - sum(binary_data), sum(binary_data))
-            )
-            p <- ggplot(plot_df, aes(x = kategori, y = frekuensi)) +
-              geom_bar(stat = "identity", fill = c("#ff7f0e", "#1f77b4"), alpha = 0.7) +
-              labs(title = "Distribusi Proporsi", x = "Kategori", y = "Frekuensi") +
-              theme_minimal()
-          } else if (input$prop_var_test_type == "prop_two" && exists("groups")) {
-            plot_data <- data.frame(
-              value = c(group1_data, group2_data),
-              group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
-            )
-            p <- ggplot(plot_data, aes(x = group, fill = group)) +
-              geom_bar(alpha = 0.7) +
-              labs(title = "Perbandingan Proporsi antar Kelompok") +
-              theme_minimal()
-          } else {
-            # Fallback for proportion tests
-            p <- ggplot(data.frame(x = var_data), aes(x = x)) +
-              geom_histogram(bins = 20, alpha = 0.7, fill = "lightblue") +
-              labs(title = "Distribusi Data", x = "Nilai", y = "Frekuensi") +
-              theme_minimal()
+      # Recreate the data for plotting to avoid scope issues
+      if (!exists("var_data") || is.null(var_data)) {
+        # Fallback: recreate var_data for plotting
+        data_to_use_plot <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+        
+        if (input$prop_var_variable %in% names(data_to_use_plot)) {
+          var_data_plot <- data_to_use_plot[[input$prop_var_variable]]
+          
+          # Convert to numeric if needed for variance tests
+          if (input$prop_var_test_type %in% c("var_one", "var_two")) {
+            if (!is.numeric(var_data_plot)) {
+              var_data_plot <- suppressWarnings(as.numeric(as.character(var_data_plot)))
+            }
           }
+          var_data_plot <- var_data_plot[!is.na(var_data_plot)]
         } else {
-          # Plot for variance tests
-          if (input$prop_var_test_type == "var_one") {
-            plot_df <- data.frame(nilai = var_data)
+          var_data_plot <- NULL
+        }
+      } else {
+        var_data_plot <- var_data
+      }
+      
+      tryCatch({
+        if (is.null(var_data_plot) || length(var_data_plot) == 0) {
+          # Error plot when no data
+          plotly::plot_ly() %>% 
+            plotly::add_text(x = 0.5, y = 0.5, text = "Tidak ada data untuk ditampilkan", 
+                           textfont = list(size = 16), showlegend = FALSE) %>%
+            plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                         yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                         title = "Tidak Ada Data")
+        } else if (input$prop_var_test_type == "var_one") {
+          # Specific plot for one-sample variance test
+          if (is.numeric(var_data_plot)) {
+            plot_df <- data.frame(nilai = var_data_plot)
             p <- ggplot(plot_df, aes(x = nilai)) +
-              geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
-              geom_vline(xintercept = mean(var_data, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) +
+              geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue", color = "white") +
+              geom_vline(xintercept = mean(var_data_plot, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) +
               geom_vline(xintercept = sqrt(input$var_test_value), color = "blue", linetype = "solid", size = 1) +
               labs(title = "Distribusi Data (Merah: Sample Mean, Biru: Test SD)", 
                    x = input$prop_var_variable, y = "Frekuensi") +
               theme_minimal()
-          } else if (input$prop_var_test_type == "var_two" && exists("groups")) {
-            plot_data <- data.frame(
-              value = c(group1_data, group2_data),
-              group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
-            )
-            p <- ggplot(plot_data, aes(x = group, y = value, fill = group)) +
-              geom_boxplot(alpha = 0.7, outlier.shape = 16, outlier.size = 2) +
-              labs(title = "Perbandingan Varians antar Kelompok", 
-                   x = "Kelompok", y = input$prop_var_variable) +
-              theme_minimal()
+            ggplotly(p)
           } else {
-            # Fallback for variance tests
-            plot_df <- data.frame(nilai = var_data)
+            plotly::plot_ly() %>% 
+              plotly::add_text(x = 0.5, y = 0.5, text = "Data harus numerik untuk uji varians", 
+                             textfont = list(size = 16), showlegend = FALSE) %>%
+              plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                           yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                           title = "Error: Data Tidak Numerik")
+          }
+        } else if (input$prop_var_test_type == "var_two" && !is.null(input$group_var_prop)) {
+          # Two-sample variance plot
+          data_to_use_plot <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+          
+          if (input$group_var_prop %in% names(data_to_use_plot)) {
+            group_data_plot <- data_to_use_plot[[input$group_var_prop]]
+            test_data_plot <- data.frame(value = var_data_plot, group = group_data_plot[1:length(var_data_plot)])
+            test_data_plot <- test_data_plot[complete.cases(test_data_plot), ]
+            
+            if (nrow(test_data_plot) > 0) {
+              p <- ggplot(test_data_plot, aes(x = group, y = value, fill = group)) +
+                geom_boxplot(alpha = 0.7, outlier.shape = 16, outlier.size = 2) +
+                labs(title = "Perbandingan Varians antar Kelompok", 
+                     x = "Kelompok", y = input$prop_var_variable) +
+                theme_minimal()
+              ggplotly(p)
+            } else {
+              plotly::plot_ly() %>% 
+                plotly::add_text(x = 0.5, y = 0.5, text = "Tidak ada data yang valid", 
+                               textfont = list(size = 16), showlegend = FALSE)
+            }
+          } else {
+            plotly::plot_ly() %>% 
+              plotly::add_text(x = 0.5, y = 0.5, text = "Variabel kelompok tidak ditemukan", 
+                             textfont = list(size = 16), showlegend = FALSE)
+          }
+        } else {
+          # Fallback plot for other test types
+          if (is.numeric(var_data_plot)) {
+            plot_df <- data.frame(nilai = var_data_plot)
             p <- ggplot(plot_df, aes(x = nilai)) +
-              geom_histogram(bins = 20, alpha = 0.7, fill = "lightgreen") +
+              geom_histogram(bins = 20, alpha = 0.7, fill = "lightgreen", color = "white") +
               labs(title = "Distribusi Data", x = "Nilai", y = "Frekuensi") +
               theme_minimal()
+            ggplotly(p)
+          } else {
+            # For non-numeric data (proportion tests)
+            if (length(unique(var_data_plot)) <= 10) {
+              plot_df <- data.frame(kategori = as.factor(var_data_plot))
+              p <- ggplot(plot_df, aes(x = kategori)) +
+                geom_bar(alpha = 0.7, fill = "lightcoral") +
+                labs(title = "Distribusi Kategori", x = "Kategori", y = "Frekuensi") +
+                theme_minimal() +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+              ggplotly(p)
+            } else {
+              plotly::plot_ly() %>% 
+                plotly::add_text(x = 0.5, y = 0.5, text = "Terlalu banyak kategori untuk ditampilkan", 
+                               textfont = list(size = 16), showlegend = FALSE)
+            }
           }
         }
-        ggplotly(p)
       }, error = function(e) {
         # Create error plot
         plotly::plot_ly() %>% 
-          plotly::add_text(x = 0.5, y = 0.5, text = paste("Error plot:", e$message), 
-                         textfont = list(size = 16), showlegend = FALSE) %>%
+          plotly::add_text(x = 0.5, y = 0.5, text = paste("Error:", e$message), 
+                         textfont = list(size = 14), showlegend = FALSE) %>%
           plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
                        yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
                        title = "Plot Error")
