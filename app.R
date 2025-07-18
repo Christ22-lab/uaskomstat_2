@@ -31,6 +31,7 @@ library(sf)
 library(maps)
 library(moments)
 library(officer)
+library(haven)  # For reading SPSS files
 
 # Global variables
 sovi_url <- "https://raw.githubusercontent.com/bmlmcmc/naspaclust/main/data/sovi_data.csv"
@@ -953,9 +954,9 @@ ui <- dashboardPage(
                     
                     conditionalPanel(
                       condition = "input.data_source == 'custom'",
-                      fileInput("file_upload", "Upload File (CSV/Excel)",
-                                accept = c(".csv", ".xlsx", ".xls")),
-                      helpText("Format yang didukung: CSV (.csv), Excel (.xlsx, .xls)")
+                      fileInput("file_upload", "Upload File (CSV/Excel/SPSS)",
+                                accept = c(".csv", ".xlsx", ".xls", ".sav")),
+                      helpText("Format yang didukung: CSV (.csv), Excel (.xlsx, .xls), SPSS (.sav)")
                     ),
                     
                     conditionalPanel(
@@ -1188,32 +1189,40 @@ ui <- dashboardPage(
               
               fluidRow(
                 box(width = 4, title = "Pengaturan Uji Asumsi", status = "primary", solidHeader = TRUE,
-                    selectInput("assumption_var", "Pilih Variabel:", choices = NULL),
-                    selectInput("assumption_group", "Group By (untuk homogenitas):", 
-                                choices = c("None" = "none"), selected = "none"),
-                    h5("Uji yang Akan Dilakukan:"),
-                    checkboxInput("test_normality", "Uji Normalitas", value = TRUE),
-                    checkboxInput("test_homogeneity", "Uji Homogenitas", value = TRUE),
-                    actionButton("run_assumptions", "Jalankan Uji", class = "btn-primary")
+                                    selectInput("assumption_var", "Pilih Variabel:", choices = NULL),
+                selectInput("assumption_group", "Group By (untuk homogenitas):", 
+                            choices = c("None" = "none"), selected = "none"),
+                h5("Uji yang Akan Dilakukan:"),
+                checkboxInput("test_normality", "Uji Normalitas", value = TRUE),
+                checkboxInput("test_homogeneity", "Uji Homogenitas (Levene)", value = TRUE),
+                checkboxInput("test_bartlett", "Uji Bartlett", value = FALSE),
+                actionButton("run_assumptions", "Jalankan Uji", class = "btn-primary")
                 ),
                 
-                box(width = 8, title = "Hasil Uji Asumsi", status = "info", solidHeader = TRUE,
-                    h4("Uji Normalitas"),
-                    verbatimTextOutput("normality_result"),
-                    div(class = "interpretation-box",
-                        textOutput("normality_interpretation")
-                    ),
-                    
-                    br(),
-                    h4("Uji Homogenitas"),
-                    verbatimTextOutput("homogeneity_result"),
-                    div(class = "interpretation-box",
-                        textOutput("homogeneity_interpretation")
-                    ),
-                    
-                    br(),
-                    downloadButton("download_assumption_report", "Download Laporan Uji Asumsi (Word)", class = "btn-info")
-                )
+                                  box(width = 8, title = "Hasil Uji Asumsi", status = "info", solidHeader = TRUE,
+                      h4("Uji Normalitas"),
+                      verbatimTextOutput("normality_result"),
+                      div(class = "interpretation-box",
+                          textOutput("normality_interpretation")
+                      ),
+                      
+                      br(),
+                      h4("Uji Homogenitas (Levene)"),
+                      verbatimTextOutput("homogeneity_result"),
+                      div(class = "interpretation-box",
+                          textOutput("homogeneity_interpretation")
+                      ),
+                      
+                      br(),
+                      h4("Uji Bartlett"),
+                      verbatimTextOutput("bartlett_result"),
+                      div(class = "interpretation-box",
+                          textOutput("bartlett_interpretation")
+                      ),
+                      
+                      br(),
+                      downloadButton("download_assumption_report", "Download Laporan Uji Asumsi (Word)", class = "btn-info")
+                  )
               ),
               
               fluidRow(
@@ -1586,15 +1595,21 @@ server <- function(input, output, session) {
     return(preview_data)
   }, striped = TRUE, hover = TRUE)
   
-  # Update choices when data changes
+  # Update choices when data changes (including transformed variables)
   observe({
-    if (!is.null(values$current_data)) {
-      numeric_vars <- names(values$current_data)[sapply(values$current_data, is.numeric)]
-      all_vars <- names(values$current_data)
-      factor_vars <- names(values$current_data)[sapply(values$current_data, function(x) is.factor(x) || is.character(x) || length(unique(x)) <= 10)]
-      char_vars <- names(values$current_data)[sapply(values$current_data, function(x) is.character(x) || is.factor(x))]
+    # Use transformed data if available, otherwise use current data
+    data_to_use <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+    
+    if (!is.null(data_to_use)) {
+      numeric_vars <- names(data_to_use)[sapply(data_to_use, is.numeric)]
+      all_vars <- names(data_to_use)
+      factor_vars <- names(data_to_use)[sapply(data_to_use, function(x) is.factor(x) || is.character(x) || length(unique(x)) <= 10)]
+      char_vars <- names(data_to_use)[sapply(data_to_use, function(x) is.character(x) || is.factor(x))]
       
-      updateSelectInput(session, "var_to_transform", choices = numeric_vars)
+      # Original numeric variables for transformation
+      original_numeric <- names(values$current_data)[sapply(values$current_data, is.numeric)]
+      
+      updateSelectInput(session, "var_to_transform", choices = original_numeric)
       updateSelectInput(session, "desc_variables", choices = numeric_vars)
       updateSelectInput(session, "x_var", choices = all_vars)
       updateSelectInput(session, "y_var", choices = numeric_vars)
@@ -1639,6 +1654,10 @@ server <- function(input, output, session) {
           values$current_data <- read.csv(input$file_upload$datapath, stringsAsFactors = FALSE)
         } else if (file_ext %in% c("xlsx", "xls")) {
           values$current_data <- openxlsx::read.xlsx(input$file_upload$datapath)
+        } else if (file_ext %in% c("sav")) {
+          values$current_data <- haven::read_sav(input$file_upload$datapath)
+          # Convert to data.frame and handle labels
+          values$current_data <- as.data.frame(values$current_data)
         } else {
           showNotification("Format file tidak didukung!", type = "error")
           return()
@@ -1778,11 +1797,13 @@ server <- function(input, output, session) {
   observeEvent(input$run_descriptive, {
     req(input$desc_variables)
     
-    data_subset <- values$current_data[, input$desc_variables, drop = FALSE]
+    # Use transformed data if available
+    data_to_use <- if (!is.null(values$transformed_data)) values$transformed_data else values$current_data
+    data_subset <- data_to_use[, input$desc_variables, drop = FALSE]
     
-    if (input$group_by_var != "none" && input$group_by_var %in% names(values$current_data)) {
+    if (input$group_by_var != "none" && input$group_by_var %in% names(data_to_use)) {
       # Fixed group by issue
-      group_data <- values$current_data[[input$group_by_var]]
+      group_data <- data_to_use[[input$group_by_var]]
       data_with_group <- data_subset
       data_with_group$group_var <- group_data
       
@@ -2265,6 +2286,70 @@ server <- function(input, output, session) {
       })
     }
     
+    # Bartlett test
+    if (input$test_bartlett && input$assumption_group != "none" && input$assumption_group %in% names(values$current_data)) {
+      group_data <- values$current_data[[input$assumption_group]]
+      
+      # Data validation
+      if (length(var_data) < 10) {
+        output$bartlett_result <- renderText({
+          "PERINGATAN: Data kurang dari 10 observasi. Hasil uji Bartlett mungkin tidak reliabel."
+        })
+      } else {
+        test_data <- data.frame(value = var_data, group = group_data[1:length(var_data)])
+        test_data <- test_data[complete.cases(test_data), ]
+        
+        if (length(unique(test_data$group)) > 1) {
+          bartlett_test <- bartlett.test(value ~ group, data = test_data)
+          
+          output$bartlett_result <- renderText({
+            paste0(
+              "HIPOTESIS UJI BARTLETT:\n\n",
+              "H₀: Varians antar kelompok sama (σ₁² = σ₂² = ... = σₖ²)\n",
+              "H₁: Varians antar kelompok tidak sama\n\n",
+              "HASIL UJI BARTLETT:\n\n",
+              "• Bartlett's K-squared: ", round(bartlett_test$statistic, 4), "\n",
+              "• df: ", bartlett_test$parameter, "\n",
+              "• p-value: ", format(bartlett_test$p.value, scientific = TRUE), "\n",
+              "• Jumlah grup: ", length(unique(test_data$group))
+            )
+          })
+          
+          output$bartlett_interpretation <- renderText({
+            paste0(
+              "INTERPRETASI UJI BARTLETT:\n\n",
+              if (bartlett_test$p.value > 0.05) {
+                "Hasil menunjukkan varians antar kelompok homogen (p > 0.05).\n\nKESIMPULAN:\n• Gagal tolak H₀\n• Asumsi homogenitas varians terpenuhi\n• Dapat menggunakan uji parametrik klasik"
+              } else {
+                "Hasil menunjukkan varians antar kelompok tidak homogen (p ≤ 0.05).\n\nKESIMPULAN:\n• Tolak H₀\n• Asumsi homogenitas varians dilanggar\n• Gunakan uji yang robust terhadap heteroskedastisitas"
+              }, "\n\n",
+              "PERBEDAAN BARTLETT vs LEVENE:\n",
+              "• Bartlett: Lebih sensitif terhadap non-normalitas\n",
+              "• Levene: Lebih robust terhadap non-normalitas\n",
+              "• Gunakan Levene jika data tidak normal\n",
+              "• Gunakan Bartlett jika data normal dan perlu sensitivitas tinggi"
+            )
+          })
+        } else {
+          output$bartlett_result <- renderText({
+            "Error: Variabel kelompok harus memiliki lebih dari satu kategori untuk uji Bartlett."
+          })
+          
+          output$bartlett_interpretation <- renderText({
+            "Tidak dapat melakukan uji Bartlett karena hanya ada satu kelompok."
+          })
+        }
+      }
+    } else if (input$test_bartlett) {
+      output$bartlett_result <- renderText({
+        "Pilih variabel kelompok untuk melakukan uji Bartlett."
+      })
+      
+      output$bartlett_interpretation <- renderText({
+        "Uji Bartlett memerlukan variabel kelompok untuk membandingkan varians antar grup."
+      })
+    }
+    
     # Create assumption plots
     output$assumption_plots <- renderPlotly({
       p1 <- ggplot(data.frame(x = var_data), aes(x = x)) +
@@ -2431,11 +2516,29 @@ server <- function(input, output, session) {
       })
       
     } else if (input$prop_var_test_type == "var_one") {
+      # Data validation
+      if (length(var_data) < 5) {
+        output$prop_var_result <- renderText({
+          "ERROR: Data tidak cukup untuk uji varians. Minimum 5 observasi diperlukan."
+        })
+        return()
+      }
+      
+      if (!is.numeric(var_data)) {
+        output$prop_var_result <- renderText({
+          "ERROR: Variabel harus numerik untuk uji varians."
+        })
+        return()
+      }
+      
       # One sample variance test (Chi-square test)
       sample_var <- var(var_data, na.rm = TRUE)
       n <- length(var_data)
       chi_stat <- (n - 1) * sample_var / input$var_test_value
       p_value <- 2 * pmin(pchisq(chi_stat, n - 1), 1 - pchisq(chi_stat, n - 1))
+      
+      # Create test result object for interpretation
+      test_result <- list(statistic = chi_stat, p.value = p_value, df = n - 1)
       
       output$prop_var_result <- renderText({
         paste0(
@@ -2550,44 +2653,74 @@ server <- function(input, output, session) {
     
     # Create plot
     output$prop_var_plot <- renderPlotly({
-      if (input$prop_var_test_type %in% c("prop_one", "prop_two")) {
-        # Plot for proportion tests
-        if (input$prop_var_test_type == "prop_one") {
-          p <- ggplot(data.frame(x = c("Tidak", "Ya"), y = c(length(var_data) - sum(binary_data), sum(binary_data))), 
-                      aes(x = x, y = y)) +
-            geom_bar(stat = "identity", fill = c("#ff7f0e", "#1f77b4"), alpha = 0.7) +
-            labs(title = "Distribusi Proporsi", x = "Kategori", y = "Frekuensi") +
-            theme_minimal()
+      tryCatch({
+        if (input$prop_var_test_type %in% c("prop_one", "prop_two")) {
+          # Plot for proportion tests
+          if (input$prop_var_test_type == "prop_one" && exists("binary_data")) {
+            plot_df <- data.frame(
+              kategori = c("Tidak", "Ya"), 
+              frekuensi = c(length(var_data) - sum(binary_data), sum(binary_data))
+            )
+            p <- ggplot(plot_df, aes(x = kategori, y = frekuensi)) +
+              geom_bar(stat = "identity", fill = c("#ff7f0e", "#1f77b4"), alpha = 0.7) +
+              labs(title = "Distribusi Proporsi", x = "Kategori", y = "Frekuensi") +
+              theme_minimal()
+          } else if (input$prop_var_test_type == "prop_two" && exists("groups")) {
+            plot_data <- data.frame(
+              value = c(group1_data, group2_data),
+              group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
+            )
+            p <- ggplot(plot_data, aes(x = group, fill = group)) +
+              geom_bar(alpha = 0.7) +
+              labs(title = "Perbandingan Proporsi antar Kelompok") +
+              theme_minimal()
+          } else {
+            # Fallback for proportion tests
+            p <- ggplot(data.frame(x = var_data), aes(x = x)) +
+              geom_histogram(bins = 20, alpha = 0.7, fill = "lightblue") +
+              labs(title = "Distribusi Data", x = "Nilai", y = "Frekuensi") +
+              theme_minimal()
+          }
         } else {
-          plot_data <- data.frame(
-            value = c(group1_data, group2_data),
-            group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
-          )
-          p <- ggplot(plot_data, aes(x = group, fill = group)) +
-            geom_bar(alpha = 0.7) +
-            labs(title = "Perbandingan Proporsi antar Kelompok") +
-            theme_minimal()
+          # Plot for variance tests
+          if (input$prop_var_test_type == "var_one") {
+            plot_df <- data.frame(nilai = var_data)
+            p <- ggplot(plot_df, aes(x = nilai)) +
+              geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
+              geom_vline(xintercept = mean(var_data, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) +
+              geom_vline(xintercept = sqrt(input$var_test_value), color = "blue", linetype = "solid", size = 1) +
+              labs(title = "Distribusi Data (Merah: Sample Mean, Biru: Test SD)", 
+                   x = input$prop_var_variable, y = "Frekuensi") +
+              theme_minimal()
+          } else if (input$prop_var_test_type == "var_two" && exists("groups")) {
+            plot_data <- data.frame(
+              value = c(group1_data, group2_data),
+              group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
+            )
+            p <- ggplot(plot_data, aes(x = group, y = value, fill = group)) +
+              geom_boxplot(alpha = 0.7, outlier.shape = 16, outlier.size = 2) +
+              labs(title = "Perbandingan Varians antar Kelompok", 
+                   x = "Kelompok", y = input$prop_var_variable) +
+              theme_minimal()
+          } else {
+            # Fallback for variance tests
+            plot_df <- data.frame(nilai = var_data)
+            p <- ggplot(plot_df, aes(x = nilai)) +
+              geom_histogram(bins = 20, alpha = 0.7, fill = "lightgreen") +
+              labs(title = "Distribusi Data", x = "Nilai", y = "Frekuensi") +
+              theme_minimal()
+          }
         }
-      } else {
-        # Plot for variance tests
-        if (input$prop_var_test_type == "var_one") {
-          p <- ggplot(data.frame(x = var_data), aes(x = x)) +
-            geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
-            geom_vline(xintercept = mean(var_data), color = "red", linetype = "dashed") +
-            labs(title = "Distribusi Data dengan Mean (garis merah)") +
-            theme_minimal()
-        } else {
-          plot_data <- data.frame(
-            value = c(group1_data, group2_data),
-            group = c(rep(groups[1], length(group1_data)), rep(groups[2], length(group2_data)))
-          )
-          p <- ggplot(plot_data, aes(x = group, y = value, fill = group)) +
-            geom_boxplot(alpha = 0.7) +
-            labs(title = "Perbandingan Varians antar Kelompok") +
-            theme_minimal()
-        }
-      }
-      ggplotly(p)
+        ggplotly(p)
+      }, error = function(e) {
+        # Create error plot
+        plotly::plot_ly() %>% 
+          plotly::add_text(x = 0.5, y = 0.5, text = paste("Error plot:", e$message), 
+                         textfont = list(size = 16), showlegend = FALSE) %>%
+          plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                       yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                       title = "Plot Error")
+      })
     })
   })
   
@@ -2678,8 +2811,34 @@ server <- function(input, output, session) {
         if (input$post_hoc) {
           tryCatch({
             tukey_result <- TukeyHSD(anova_model)
+            
+            # Extract significant comparisons
+            tukey_df <- as.data.frame(tukey_result[[1]])
+            sig_comparisons <- tukey_df[tukey_df$`p adj` < 0.05, ]
+            
             output$posthoc_result <- renderText({
-              paste("POST-HOC TEST (TUKEY HSD):\n\n", capture.output(print(tukey_result)))
+              result_text <- paste("POST-HOC TEST (TUKEY HSD):\n\n")
+              result_text <- paste0(result_text, "INTERPRETASI POST-HOC:\n\n")
+              
+              if (nrow(sig_comparisons) > 0) {
+                result_text <- paste0(result_text, "PERBANDINGAN YANG SIGNIFIKAN (p < 0.05):\n")
+                for (i in 1:nrow(sig_comparisons)) {
+                  comp_name <- rownames(sig_comparisons)[i]
+                  p_val <- sig_comparisons$`p adj`[i]
+                  diff_val <- sig_comparisons$diff[i]
+                  result_text <- paste0(result_text, "• ", comp_name, ": perbedaan = ", 
+                                      round(diff_val, 4), ", p = ", round(p_val, 4), "\n")
+                }
+                result_text <- paste0(result_text, "\nKESIMPULAN: Terdapat ", nrow(sig_comparisons), 
+                                    " pasangan kelompok yang berbeda secara signifikan.\n\n")
+              } else {
+                result_text <- paste0(result_text, "TIDAK ADA PERBANDINGAN YANG SIGNIFIKAN (p ≥ 0.05)\n")
+                result_text <- paste0(result_text, "KESIMPULAN: Meskipun ANOVA menunjukkan perbedaan, ")
+                result_text <- paste0(result_text, "post-hoc test tidak menemukan pasangan spesifik yang berbeda signifikan.\n\n")
+              }
+              
+              result_text <- paste0(result_text, "DETAIL HASIL:\n", capture.output(print(tukey_result)))
+              return(result_text)
             })
           }, error = function(e) {
             output$posthoc_result <- renderText({
@@ -2710,7 +2869,7 @@ server <- function(input, output, session) {
       # Create ANOVA plots
       output$anova_plots <- renderPlotly({
         tryCatch({
-          if (input$anova_type == "oneway") {
+          if (exists("anova_model") && input$anova_type == "oneway") {
             p1 <- ggplot(anova_data, aes_string(x = input$anova_factor1, y = input$anova_dependent)) +
               geom_boxplot(aes_string(fill = input$anova_factor1), alpha = 0.7, 
                           outlier.shape = 16, outlier.size = 2, size = 1.2, width = 0.6) +
@@ -2737,7 +2896,7 @@ server <- function(input, output, session) {
             
             subplot(ggplotly(p1), ggplotly(p2), nrows = 1, 
                     subplot_titles = c("Group Comparisons", "Residual Analysis"))
-          } else {
+          } else if (exists("anova_model") && input$anova_type == "twoway") {
             p <- ggplot(anova_data, aes_string(x = input$anova_factor1, y = input$anova_dependent, 
                                               fill = input$anova_factor2)) +
               geom_boxplot(alpha = 0.7) +
@@ -2747,9 +2906,23 @@ server <- function(input, output, session) {
               theme_minimal() +
               theme(axis.text.x = element_text(angle = 45, hjust = 1))
             ggplotly(p)
+          } else {
+            # Fallback plot if model doesn't exist
+            p <- ggplot(anova_data, aes_string(x = input$anova_factor1, y = input$anova_dependent)) +
+              geom_boxplot(alpha = 0.7, fill = "lightblue") +
+              labs(title = "Data Overview", 
+                   x = input$anova_factor1, y = input$anova_dependent) +
+              theme_minimal()
+            ggplotly(p)
           }
         }, error = function(e) {
-          plotly::plot_ly() %>% plotly::add_text(text = paste("Error creating plot:", e$message))
+          # Create a simple text plot for errors
+          plotly::plot_ly() %>% 
+            plotly::add_text(x = 0.5, y = 0.5, text = paste("Error:", e$message), 
+                           textfont = list(size = 16), showlegend = FALSE) %>%
+            plotly::layout(xaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                         yaxis = list(showgrid = FALSE, showticklabels = FALSE, title = ""),
+                         title = "Visualization Error")
         })
       })
       
@@ -2819,22 +2992,33 @@ server <- function(input, output, session) {
       })
       
       output$regression_interpretation <- renderText({
+        # Count significant predictors
+        coef_summary <- reg_summary$coefficients
+        sig_predictors <- sum(coef_summary[-1, 4] < 0.05, na.rm = TRUE)  # Exclude intercept
+        total_predictors <- nrow(coef_summary) - 1
+        
         paste0(
-          "**INTERPRETASI HASIL REGRESI:**\n\n",
-          "**KRITERIA KEPUTUSAN:**\n",
-          "• α = 0.05 (tingkat signifikansi)\n",
-          "• Jika p-value < 0.05: Tolak H₀ (model signifikan)\n",
-          "• Jika p-value ≥ 0.05: Gagal tolak H₀ (model tidak signifikan)\n\n",
-          "**KESIMPULAN MODEL:**\n",
+          "INTERPRETASI HASIL REGRESI:\n\n",
+          "EVALUASI MODEL KESELURUHAN:\n",
+          "• R-squared: ", round(r_squared, 4), " (menjelaskan ", round(r_squared*100, 1), "% variasi)\n",
+          "• F-test p-value: ", format(p_value, scientific = TRUE), "\n",
           if (p_value < 0.05) {
-            "• Model secara keseluruhan signifikan (p < 0.05)\n• Model dapat menjelaskan variasi dalam variabel dependen\n• Minimal ada satu prediktor yang berpengaruh signifikan"
+            "• Model signifikan secara keseluruhan (p < 0.05)"
           } else {
-            "• Model secara keseluruhan tidak signifikan (p ≥ 0.05)\n• Model mungkin tidak memberikan prediksi yang baik\n• Perlu evaluasi ulang pemilihan variabel"
+            "• Model tidak signifikan secara keseluruhan (p ≥ 0.05)"
           }, "\n\n",
-          "**INTERPRETASI KOEFISIEN:**\n",
-          "• Koefisien dengan p-value < 0.05 berpengaruh signifikan\n",
-          "• Tanda koefisien menunjukkan arah hubungan (positif/negatif)\n",
-          "• Nilai koefisien menunjukkan besaran perubahan variabel dependen"
+          "EVALUASI PREDIKTOR INDIVIDUAL:\n",
+          "• Jumlah prediktor signifikan: ", sig_predictors, " dari ", total_predictors, "\n",
+          "• Prediktor signifikan: variabel dengan p-value < 0.05\n",
+          "• Arah hubungan: positif (+) atau negatif (-) dari tanda koefisien\n\n",
+          "REKOMENDASI:\n",
+          if (p_value < 0.05 && r_squared > 0.1) {
+            "• Model dapat digunakan untuk prediksi\n• Fokus pada prediktor yang signifikan\n• Periksa asumsi regresi"
+          } else if (p_value < 0.05 && r_squared <= 0.1) {
+            "• Model signifikan tapi daya prediksi rendah\n• Pertimbangkan tambahan variabel prediktor\n• Evaluasi outliers"
+          } else {
+            "• Model perlu diperbaiki\n• Pertimbangkan transformasi variabel\n• Evaluasi ulang pemilihan prediktor"
+          }
         )
       })
       
