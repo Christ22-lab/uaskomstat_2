@@ -185,15 +185,20 @@ ui <- dashboardPage(
           min-height: 100vh;
         }
         
-        /* Dashboard Layout */
+        /* Dashboard Layout - Light Purple Background */
         .content-wrapper, .right-side {
-          background: #f8fafc !important;
+          background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 50%, #f3f0ff 100%) !important;
           min-height: 100vh;
         }
         
-        /* Force consistent background */
+        /* Force consistent light purple background */
         .main-content {
-          background: #f8fafc !important;
+          background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 50%, #f3f0ff 100%) !important;
+        }
+        
+        /* Additional dashboard background elements */
+        .content {
+          background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 50%, #f3f0ff 100%) !important;
         }
         
         /* Header Styling */
@@ -890,10 +895,10 @@ ui <- dashboardPage(
           background: #f8fafc !important;
         }
         
-        /* Dark mode support - Override to maintain light theme */
+        /* Dark mode support - Override to maintain light purple theme */
         @media (prefers-color-scheme: dark) {
-          .content-wrapper, .right-side {
-            background: #f8fafc !important;
+          .content-wrapper, .right-side, .main-content, .content {
+            background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 50%, #f3f0ff 100%) !important;
             color: #374151 !important;
           }
           
