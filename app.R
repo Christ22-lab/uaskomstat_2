@@ -687,6 +687,78 @@ ui <- dashboardPage(
           border-color: var(--primary-color);
         }
         
+        /* Homepage Feature Cards - Purple Border Styling */
+        .feature-card {
+          background: white !important;
+          border: 2px solid #8b5cf6 !important; /* Purple border */
+          border-radius: 12px !important;
+          padding: 20px !important;
+          margin: 10px 0 !important;
+          box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1), 0 2px 4px -1px rgba(139, 92, 246, 0.06) !important;
+          transition: all 0.3s ease !important;
+          position: relative !important;
+          overflow: hidden !important;
+        }
+        
+        .feature-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #8b5cf6, #a855f7, #c084fc) !important;
+        }
+        
+        .feature-card:hover {
+          border-color: #7c3aed !important;
+          transform: translateY(-4px) !important;
+          box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.2), 0 4px 6px -2px rgba(139, 92, 246, 0.1) !important;
+        }
+        
+        .feature-card h5 {
+          color: #7c3aed !important;
+          font-weight: 600 !important;
+          margin-bottom: 12px !important;
+          font-size: 1.1rem !important;
+        }
+        
+        .feature-card p {
+          color: #4b5563 !important;
+          line-height: 1.6 !important;
+          margin: 0 !important;
+        }
+        
+        /* Homepage Info Box - Purple Border */
+        .info-box {
+          background: white !important;
+          border: 2px solid #a855f7 !important;
+          border-radius: 12px !important;
+          padding: 20px !important;
+          margin: 20px 0 !important;
+          box-shadow: 0 4px 6px -1px rgba(168, 85, 247, 0.1) !important;
+          position: relative !important;
+        }
+        
+        .info-box::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #a855f7, #c084fc, #ddd6fe) !important;
+        }
+        
+        /* Text gradient for headers */
+        .text-gradient {
+          background: linear-gradient(135deg, #8b5cf6, #a855f7) !important;
+          -webkit-background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          background-clip: text !important;
+          font-weight: 700 !important;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
           .box-body {
@@ -1078,9 +1150,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Statistik Deskriptif - Analisis Ringkasan Data", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk menganalisis karakteristik dasar data melalui ukuran pemusatan, penyebaran, dan bentuk distribusi."),
-                        p(strong("⚡ Fitur Utama:"), "Perhitungan mean, median, standar deviasi, min, max, skewness, kurtosis, analisis berdasarkan kelompok, dan visualisasi distribusi data."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih variabel yang akan dianalisis, 2) Tentukan pengelompokan (opsional), 3) Jalankan analisis, 4) Interpretasi hasil dan download laporan.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk menganalisis karakteristik dasar data melalui ukuran pemusatan, penyebaran, dan bentuk distribusi."),
+                        p(strong("Fitur Utama:"), "Perhitungan mean, median, standar deviasi, min, max, skewness, kurtosis, analisis berdasarkan kelompok, dan visualisasi distribusi data."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih variabel yang akan dianalisis, 2) Tentukan pengelompokan (opsional), 3) Jalankan analisis, 4) Interpretasi hasil dan download laporan.")
                     )
                 )
               ),
@@ -1124,9 +1196,9 @@ ui <- dashboardPage(
               fluidRow(
                 box(width = 12, title = "Visualisasi Data - Representasi Grafis", status = "info", solidHeader = TRUE,
                     div(class = "info-box",
-                        p(strong("🎯 Tujuan Menu:"), "Menu ini digunakan untuk membuat berbagai jenis visualisasi data yang interaktif untuk memahami pola, hubungan, dan distribusi data."),
-                        p(strong("⚡ Fitur Utama:"), "Scatter plot, box plot, histogram, correlation matrix, bar chart, density plot dengan interaktivitas plotly dan opsi pewarnaan berdasarkan kategori."),
-                        p(strong("📋 Cara Penggunaan:"), "1) Pilih jenis plot, 2) Tentukan variabel X dan Y (jika diperlukan), 3) Pilih variabel untuk pewarnaan (opsional), 4) Buat visualisasi dan download hasil.")
+                        p(strong("Tujuan Menu:"), "Menu ini digunakan untuk membuat berbagai jenis visualisasi data yang interaktif untuk memahami pola, hubungan, dan distribusi data."),
+                        p(strong("Fitur Utama:"), "Scatter plot, box plot, histogram, correlation matrix, bar chart, density plot dengan interaktivitas plotly dan opsi pewarnaan berdasarkan kategori."),
+                        p(strong("Cara Penggunaan:"), "1) Pilih jenis plot, 2) Tentukan variabel X dan Y (jika diperlukan), 3) Pilih variabel untuk pewarnaan (opsional), 4) Buat visualisasi dan download hasil.")
                     )
                 )
               ),
